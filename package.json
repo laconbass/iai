@@ -1,12 +1,19 @@
 {
   "name": "iai",
-  "version": "0.0.1-alpha",
-  "description": "@laconbass web development framework for node.js",
-  "main": "iai",
-  "dependencies": {
-    "iai-oop": ">= 0.0.3"
+  "version": "1.0.0-alpha",
+  "description": "@laconbass' web development philosophy in a node.js package",
+  "main": "lib/iai.js",
+  "scripts": {
+    "test": "node node_modules/.bin/mocha"
   },
-  "repository": {
-    "type": "git", "url": "https://github.com/laconbass/iai.git"
-  }
+  "keywords": [
+    "iai"
+  ],
+  "author": "Lorenzo García Rivera",
+  "devDependencies": {
+    "mocha": "1.12.x",
+    "chai": "~1.8.0",
+    "file": "0.2.x"
+  },
+  "dependencies": {}
 }
