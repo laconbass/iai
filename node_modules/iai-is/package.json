@@ -1,0 +1,23 @@
+{
+  "name": "iai-is",
+  "version": "1.0.0",
+  "description": "Object.prototype.string based typechecks + extra 'whatever is *' check functions",
+  "author": "Lorenzo García Rivera",
+  "license": "BSD-2-Clause",
+  "main": "index.js",
+  "files": [ "index.js", "LICENSE" ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/laconbass/iai-is.git"
+  },
+  "bugs": {
+    "url": "https://github.com/laconbass/iai-is/issues"
+  },
+  "devDependencies": {
+    "chai": "~1.8.1",
+    "mocha": "~1.13.0"
+  },
+  "scripts": {
+    "test": "node node_modules/.bin/mocha"
+  }
+}

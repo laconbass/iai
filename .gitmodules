@@ -4,9 +4,6 @@
 [submodule "node_modules/iai-util"]
 	path = node_modules/iai-util
 	url = https://github.com/laconbass/iai-util.git
-[submodule "iai-is"]
-	path = iai-is
-	url = https://github.com/laconbass/iai-is.git
 [submodule "node_modules/iai-is"]
 	path = node_modules/iai-is
 	url = https://github.com/laconbass/iai-is.git
