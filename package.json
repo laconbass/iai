@@ -15,5 +15,8 @@
     "chai": "~1.8.0",
     "file": "0.2.x"
   },
-  "dependencies": {}
+  "dependencies": {
+    "iai-oop": "*",
+    "iai-util": "*"
+  }
 }
