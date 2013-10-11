@@ -8,32 +8,46 @@ The name *iai* is taken from the japanesse martial art *iaido*. Under the hood i
 
 The *iai* term comes from two ideograms. *i* means spirit and *ai* means union, harmony. Together, *the spirit union* or *the spirit harmony*. The word is short, symmetric, and easy to read. It's just beautiful, and suggests quickness. This attribute built the slogan:
 
-> As fast as say "iai"
+> **As fast as say "iai"**
 
-## Design principles
+## Design principles ##
 
-### Minimalistic
+### As fast as say iai ###
 
-The iai module provides an api to define applications and their components, that's it. Some utility functions are bundled too to provide the necessary logic to keep things working but they are lazy loaded so there is no unneccesary memory usage until it is really needed.
+Developing with iai should be as fast as saying the word, once developers dived through the learning curve.
 
-### Fluid
+### Minimalistic and Lightweight ###
 
-Chainable apis are beautiful to read. Strongly inspired by the jQuery's *"write less,
-do more"*, the iai api is designed to be expresive but not verbose. The code flow is
-as natural as deferred promises, but based in the standard node.js callback conventions.
+The iai module provides an api to define applications and their components, that's it. Some utility functions
+are bundled too to provide the necessary logic to keep things working but they are lazy loaded so there is no
+unneccesary memory usage until it is really needed.
 
-### Asynchronous batch processing
+### Fluid aka. *write less, do more*###
 
-Forget the sync code logic. Each action is an async task. Each task is a function. Each function is pushed to a heap and is called as soon as is posible *on the next loop around the event loop* (aka. `process.nextTick`), once the previous task has been completed (aka. "first in, first out").
+Chainable apis are beautiful to read. Strongly inspired by the jQuery's *"write less,do more"*, the iai api is
+designed to be expresive but not verbose. The code flow is as natural as deferred promises, but based in the
+standard [node.js callback convention](http://nodeguide.com/style.html#callbacks).
 
-### Easy integrable and structure independent
+### Asynchronous batch processing ###
 
-The api does not assume a project structure. The api itself is meant to programatically define the project structure. This allows easy integration with existing tools, like express or connect. It's easy because it does not wrap other frameworks. It's a complement to these de-facto standards.
+Forget the sync code logic. Each action is an async task. Each task is a function. Each function is pushed to
+a heap and is called as soon as is posible *on the next loop around the event loop* (aka. `process.nextTick`),
+once the previous task has been completed (aka. *"first in, first out"*).
+
+### Easy integrable and structure independent ###
+
+The api does not assume a project structure. The api itself is meant to programatically define the project
+structure. This allows easy integration with existing tools, like express or connect. It's easy because it
+does not wrap other frameworks. It's a complement to these de-facto standards.
 
 
-### REST based
+### REST based ###
 
 Each application components is...
+
+### Content Management ~~System~~ Strategy ###
+
+Your CMS should be your application, not your framework.
 
 ## In a nutshell,
 
@@ -41,5 +55,3 @@ iai is a way to programatically define a project structure, and access or modify
 that structure on the fly.
 
 **just from the node console!!**
-
-## Content ~~Management System~~ Strategy
