@@ -16,6 +16,8 @@
     "file": "0.2.x"
   },
   "dependencies": {
+    "iai-is": "*",
+    "iai-loader": "*",
     "iai-oop": "*",
     "iai-util": "*"
   }
