@@ -13,7 +13,8 @@
   "devDependencies": {
     "mocha": "1.12.x",
     "chai": "~1.8.0",
-    "file": "0.2.x"
+    "file": "0.2.x",
+    "iai-test": "*"
   },
   "dependencies": {
     "iai-is": "*",
