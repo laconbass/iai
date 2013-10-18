@@ -1,8 +1,9 @@
 --recursive
---reporter dot
+--reporter spec
 --bail
 --watch
 
 
 
 
+

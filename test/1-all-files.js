@@ -29,43 +29,42 @@ var libRoot = join( __dirname, "..", "lib" )
   , file = require( "file" )
 ;
 
-describe( "each file in the iai lib directory", function(){
-  file.walkSync( libRoot, function( dirPath, dirs, files ) {
-    files.forEach(function( filepath ){
-        if( path.extname(filepath) != '.js' ){
-          return;
-        }
-        filepath = path.join( dirPath, filepath );
-        var relativePath = path.relative( libRoot, filepath );
-        describe( "the file "+relativePath, function() {
+file.walkSync( libRoot, function( dirPath, dirs, files ) {
+  files.forEach(function( filepath ){
+    if( path.extname(filepath) != '.js' ){
+      return;
+    }
+    filepath = path.join( dirPath, filepath );
+    var relativePath = path.relative( libRoot, filepath );
+    describe( "the file "+relativePath, function() {
 
-            var something;
-            it( "should be required without throwing errors", function() {
-                something = require( filepath )
-            });
+      var something;
+      it( "should be required without throwing errors", function() {
+        something = require( filepath )
+      });
 
-            var modname = relativePath.replace( path.extname( relativePath ), "" );
+      var modname = relativePath.replace( path.extname( relativePath ), "" );
 
-            for( var key in accesible_from ) {
-                it(
-                  format( "should be accesible from %s as %s", key, modname )
-                  , function(){
-                    assert.deepEqual( something, accesible_from[ key ]( modname ) );
-                });
-            }
+      for( var key in accesible_from ) {
+        it(
+          format( "should be accesible from %s as %s", key, modname )
+          , function(){
+            assert.deepEqual( something, accesible_from[ key ]( modname ) );
+          });
+      }
 
-            Object.keys(should_export).forEach(function( desc ){
-                it( "should export "+desc, function(){
-                    should_export[ desc ]( something );
-                });
-            })
+      Object.keys(should_export).forEach(function( desc ){
+        it( "should export "+desc, function(){
+          should_export[ desc ]( something );
         });
-    })
+      })
+    });
   })
-})
+});
 
 
 
 
 
 
+
