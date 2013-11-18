@@ -1,35 +1,53 @@
 var assert = require('chai').assert
-  , iai = require('../../..')
+  , iai = require('../..')
   , test = iai('test')
-  , testOpts = { system: 'SQLite' };
+  , testOpts = { system: 'Dummy' }
+  , Connection = iai('model/core/Connection')
+  , DAO = iai('model/core/DAO')
+  , Facade = iai('model/core/Facade')
 ;
 
-describe.only( 'generic model interface', function(){
+describe( 'generic model interface', function(){
   describe( 'Connection', function(){
-    var Connection;
-    it( 'should be required without errors', function(){
-      Connection = iai('plugins/model/Core/Connection.js');
+    it( 'should be a builder', function(){
+      test.builder( Connection, [testOpts] )
+    })
+    it( 'should be a factory for specific management system connections', function(){
+      assert( Connection(testOpts) instanceof iai('model/dummy/DummyConnection') )
     })
     it( 'should have the following api', function(){
       test.methods( Connection(testOpts), 'open', 'close' );
     })
   })
   describe( 'DAO', function(){
-    var DAO;
-    it( 'should be required without errors', function(){
-      DAO = iai('plugins/model/Core/DAO.js');
+    it( 'should be a builder', function(){
+      test.builder( DAO, [testOpts] )
+    })
+    it( 'should be a factory for specific management system DAOs', function(){
+      assert( DAO(testOpts) instanceof iai('model/dummy/DummyDAO') )
     })
     it( 'should have the following api', function(){
       test.methods( DAO(testOpts), 'create', 'retrieve', 'update', 'destroy' );
     })
   })
   describe( 'Facade', function(){
-    var Facade;
-    it( 'should be required without errors', function(){
-      Facade = iai('plugins/model/Core/Facade.js');
+    it( 'should be a builder', function(){
+      test.builder( Facade, [testOpts] )
     })
     it( 'should have the following api', function(){
       test.methods( Facade(testOpts), 'find', 'findOne', 'create', 'update', 'destroy' );
+    })
+    describe( '#connection', function(){
+      var facade = Facade(testOpts);
+      it( 'should be a Connection instance', function(){
+        assert( facade.connection instanceof Connection );
+      })
+    })
+    describe( '#dao', function(){
+      var facade = Facade(testOpts);
+      it( 'should be a DAO instance', function(){
+        assert( facade.dao instanceof DAO );
+      })
     })
   })
 

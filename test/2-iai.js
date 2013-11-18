@@ -35,7 +35,7 @@ describe( "the iai function", function(){
     })
   })
 
-  describe( "#app", function(){
+  describe.skip( "#app", function(){
     it( "should return an instance of core/Application", function(){
       var app = iai.app();
       assert.instanceOf( iai.app(), iai("core/Application") );
@@ -209,6 +209,8 @@ describe.skip( "iai.api instances", function(){
   })
 
 });
+
+
 
 
 

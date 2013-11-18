@@ -6,7 +6,7 @@ var assert = require( "chai" ).assert
   , TEST_PORT = 8888
 ;
 
-describe( "example devel project", function(){
+describe.skip( "example devel project", function(){
 
   it( "should export a project api, required without errors", function(){
     project = iai( '../examples/devel' );
@@ -37,7 +37,7 @@ describe( "example devel project", function(){
   })
 })
 
-describe( "devel web interface", function(){
+describe.skip( "devel web interface", function(){
   beforeEach(function(done){
     this.visit = function(){
       arguments[0] = "https://localhost:"+TEST_PORT+arguments[0];
