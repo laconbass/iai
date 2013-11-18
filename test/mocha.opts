@@ -1,7 +1,8 @@
 --recursive
 --reporter spec
---bail
 --watch
+
+
 
 
 

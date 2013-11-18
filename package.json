@@ -14,7 +14,8 @@
     "mocha": "1.12.x",
     "chai": "~1.8.0",
     "file": "0.2.x",
-    "iai-test": "*"
+    "iai-test": "*",
+    "zombie": "~2.0.0-alpha24"
   },
   "dependencies": {
     "iai-is": "*",

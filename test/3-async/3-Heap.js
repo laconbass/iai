@@ -4,9 +4,8 @@ var assert = require( "chai" ).assert
   , Heap = iai( "async/Heap" )
 ;
 
-describe( "Heap", function(){
+describe( "async/Heap", function(){
   it( "should be a builder", function(){
-    console.log( Heap() );
     test.builder( Heap )
   })
 })
@@ -21,7 +20,7 @@ describe( "Heap instances", function(){
   })
 
   it( "should have the following chainable api", function(){
-    test.chainableApi( this.api, {
+    test.chainableApi( this.heap, {
       "task": [ function( done ){} ],
       "then": [ function(){} ]
     });
@@ -29,12 +28,12 @@ describe( "Heap instances", function(){
 
   describe( "#task", function(){
     it( "should execute given task if none tasks added yet", function(done){
-      this.api.task(function(callback){
+      this.heap.task(function(callback){
         done();
       })
     })
     it("should execute the task function as expected", function(done){
-      var api = this.api.task(function(callback){
+      var api = this.heap.task(function(callback){
         assert.deepEqual( this, api, "context is not the current api" )
         assert.isFunction( callback, "callback is not a function" )
         done();
@@ -42,7 +41,7 @@ describe( "Heap instances", function(){
     })
     it( "should emit the error passed to callback", function(done){
       var pass = Error("Oops!");
-      this.api.task(function(callback){
+      this.heap.task(function(callback){
         callback( pass );
       }).on( 'error', function(err){
         assert.deepEqual( err, pass );
@@ -51,7 +50,7 @@ describe( "Heap instances", function(){
     })
     it( "should skip all tasks if callback receives error", function(done){
       var pass = Error( "something happened" )
-      this.api
+      this.heap
         .task(function(callback){
           callback( pass )
         })
@@ -66,7 +65,7 @@ describe( "Heap instances", function(){
     })
     it( "should emit an error thrown on the task", function(done){
       var oops = Error( "Oops" );
-      this.api
+      this.heap
       .task(function(callback){
         throw oops;
       })

@@ -4,7 +4,7 @@ var iai = require( '../..' )
   , Notifier = iai( 'async/Notifier' )
 ;
 
-describe( "#notifier", function(){
+describe( "Notifier", function(){
       beforeEach(function(){
         this.case = Notifier();
       })
