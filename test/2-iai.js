@@ -12,16 +12,16 @@ describe( "the iai function", function(){
 
   describe( "#load", function(){
     it( "should require the given path relative to the iai lib path", function(){
-      assert.deepEqual( iai.load( "util/inspector" ), require( "../lib/util/inspector" ) );
+      assert.deepEqual( iai.load( "utils/inspector" ), require( "../lib/utils/inspector" ) );
     })
   })
 
   describe( "given a relative path", function(){
     it( "should delegate on iai.load", function(){
       var cases = [
-        "util/inspector",
-        "./util/inspector",
-        "../lib/util/inspector"
+        "utils/inspector",
+        "./utils/inspector",
+        "../lib/utils/inspector"
       ];
       for( var i in cases ) {
         assert.deepEqual( iai(cases[i]), iai.load(cases[i]) );
@@ -209,6 +209,8 @@ describe.skip( "iai.api instances", function(){
   })
 
 });
+
+
 
 
 

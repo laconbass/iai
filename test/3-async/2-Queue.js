@@ -83,7 +83,7 @@ describe( "Queue instances", function(){
       })
       .push( {} ) // execute worker
     });
-     it( "should skip next datas given an error", function(done){
+    it( "should skip next datas given an error", function(done){
       var pass = Error( "this will be thrown" );
       var q = Queue(function worker(data, callback){
         callback( data );
@@ -107,6 +107,34 @@ describe( "Queue instances", function(){
         done();
       })
       .push( "data" )
+    })
+    it( "should pass to the worker an array as third argument with "
+       +"arguments received by the previous done function", function(testDone){
+      this.timeout(10);
+      Queue(function worker( data, done, previous ){
+        assert.isArray( previous, "previous should be an Array" )
+        switch(data){
+          case 1:
+            return done( null, "next is one" );
+          case 2:
+            assert.equal( previous[0], "next is one" );
+            return done( null, "one pamela", "two pamela" );
+          case 3:
+            assert.equal( previous[0], "one pamela" );
+            assert.equal( previous[1], "two pamela" );
+            return done( null, null, 3, "secret", "cat" );
+          case 4:
+            assert.isNull( previous[0] );
+            assert.equal( previous[1], 3 );
+            assert.equal( previous[2], "secret" );
+            assert.equal( previous[3], "cat" );
+            return done();
+          case 5:
+            testDone();
+            return done();
+        }
+      })
+      .push(1).push(2).push(3).push(4).push(5)
     })
   })
 })
