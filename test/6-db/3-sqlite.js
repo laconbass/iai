@@ -1,7 +1,7 @@
 var assert = require('chai').assert
   , iai = require('../..')
   , test = iai('test')
-  , Connection = iai('model/sqlite/SQLiteConnection')
+  , Connection = iai('db/sqlite/SQLiteConnection')
   , SQLite3Database = require('sqlite3').Database
   , testOpts = {
       system: 'SQLite',

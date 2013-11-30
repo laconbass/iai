@@ -1,7 +1,7 @@
 var assert = require("chai").assert
   , iai = require("../..")
   , test = iai( "test" )
-  , validators = iai( "core/validators" )
+  , validators = iai( "data/validators" )
   , ValidationError = validators
 ;
 

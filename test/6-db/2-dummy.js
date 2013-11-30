@@ -2,7 +2,7 @@ var assert = require('chai').assert
   , iai = require('../..')
   , test = iai('test')
   , fs = require('fs')
-  , DummyConnection = iai('model/dummy/DummyConnection')
+  , DummyConnection = iai('db/dummy/DummyConnection')
   , filename = __dirname+'/test-db.dummy'
   , testOpts = {
       system: 'Dummy',
