@@ -53,6 +53,191 @@ describe( "RegExpValidator", function(){
   })
 })
 
+describe( "EmailValidator", function(){
+  it( "should be a function that returns a function", function(){
+    assert.isFunction( validators.Email, "should be a function" );
+    assert.isFunction( validators.Email(), "should return a function" );
+  })
+  it( "should be exposed on validators.email", function(){
+    assert.isFunction( validators.email );
+  })
+  describe( "success cases", function(){
+    [
+      "test@test.com",
+      "test@io",
+      "test@iana.org",
+      "test@nominet.org.uk",
+      "test@about.museum",
+      "a@iana.org",
+      "test@e.com",
+      "test@iana.a",
+      "test.test@iana.org",
+      "!#$%&`*+/=?^`{|}~@iana.org",
+      "123@iana.org",
+      "test@123.com",
+      "test@iana.123",
+      "test@255.255.255.255",
+      "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklm@iana.org",
+      "test@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.com",
+      "test@mason-dixon.com",
+      "test@c--n.com",
+      "test@iana.co-uk",
+      "a@a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v",
+      "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklm@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi",
+      '"test"@iana.org',
+      '""@iana.org',
+      '"\a"@iana.org',
+      'test@[255.255.255.255]',
+      'test@[IPv6:1111:2222:3333:4444:5555:6666:7777:8888]', //
+      'test@[IPv6:1111:2222:3333:4444:5555:6666::8888]', //
+      'test@[IPv6:1111:2222:3333:4444:5555::8888]', //
+      'test@[IPv6:::3333:4444:5555:6666:7777:8888]', //
+      'test@[IPv6:::]', //
+      'test@[IPv6:1111:2222:3333:4444:5555:6666:255.255.255.255]',//
+      'test@[IPv6:1111:2222:3333:4444::255.255.255.255]',//
+
+      'test@xn--hxajbheg2az3al.xn--jxalpdlp', //
+      'xn--test@iana.org', //
+      'test@org',//
+      'test@test.com',//
+      'test@nic.no'
+    ].forEach(function(value){
+      it("'"+value+"'", testOk(validators.email, value))
+    })
+  })
+
+  describe( "fail cases", function(){
+    [
+      "",
+      "test",
+      "@",
+      "test@",
+      "@io",
+      "@iana.org",
+      ".test@iana.org",
+      "test.@iana.org",
+      "test..iana.org",
+      "test_exa-mple.com",
+      "test\\@test@iana.org",
+      "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklmn@iana.org",
+      "test@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklm.com",
+      "test@-iana.org",
+      "test@iana-.com",
+      "test@.iana.org",
+      "test@iana.org.",
+      "test@iana..com",
+      "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklm@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghij",
+      "a@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefg.hij",
+      "a@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefg.hijk",
+      '"""@iana.org',
+      '"\""@iana.org',
+      '"\\\"@iana.org',
+      'test"@iana.org',
+      '"test@iana.org',
+      '"test"test@iana.org',
+      'test"text"@iana.org',
+      '"test""test"@iana.org',
+      '"test"."test"@iana.org',
+      '"test".test@iana.org',
+      '"test␀"@iana.org',
+      '"test\\␀"@iana.org',
+      '"abcdefghijklmnopqrstuvwxyz␠abcdefghijklmnopqrstuvwxyz␠abcdefghj"@iana.org',
+      '"abcdefghijklmnopqrstuvwxyz␠abcdefghijklmnopqrstuvwxyz␠abcdefg\\h"@iana.org',
+      'test@a[255.255.255.255]',
+      'test@[255.255.255]',
+      'test@[255.255.255.255.255]',
+      'test@[255.255.255.256]',
+      'test@[1111:2222:3333:4444:5555:6666:7777:8888]',
+      'test@[IPv6:1111:2222:3333:4444:5555:6666:7777]',
+      'test@[IPv6:1111:2222:3333:4444:5555:6666:7777:8888:9999]',
+      'test@[IPv6:1111:2222:3333:4444:5555:6666:7777:888G]',
+      'test@[IPv6:1111:2222:3333:4444:5555:6666::7777:8888]',
+      'test@[IPv6::3333:4444:5555:6666:7777:8888]',
+      'test@[IPv6:1111::4444:5555::8888]',
+      'test@[IPv6:1111:2222:3333:4444:5555:255.255.255.255]',
+      'test@[IPv6:1111:2222:3333:4444:5555:6666:7777:255.255.255.255]',
+      'test@[IPv6:1111:2222:3333:4444:5555:6666::255.255.255.255]',
+      'test@[IPv6:1111:2222:3333:4444:::255.255.255.255]',
+      'test@[IPv6::255.255.255.255]',
+      '␠test␠@iana.org',
+      'test@␠iana␠.com',
+      'test␠.␠test@iana.org',
+      '␍␊␠test@iana.org',
+      '␍␊␠␍␊␠test@iana.org',
+      '(comment)test@iana.org',
+      '((comment)test@iana.org',
+      '(comment(comment))test@iana.org',
+      'test@(comment)iana.org',
+      'test(comment)test@iana.org',
+      'test@(comment)[255.255.255.255]',
+      '(comment)abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklm@iana.org',
+      'test@(comment)abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.com',
+      '(comment)test@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghik.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghik.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijk.abcdefghijklmnopqrstuvwxyzabcdefghijk.abcdefghijklmnopqrstu',
+      'test@iana.org␊',
+      'test@iana.org-',
+      '"test@iana.org',
+      '(test@iana.org',
+      'test@(iana.org',
+      'test@[1.2.3.4',
+      '"test\\"@iana.org',
+      '(comment\\)test@iana.org',
+      'test@iana.org(comment\\\)',
+      'test@iana.org(comment\\',
+      'test@[RFC-5322-domain-literal]',
+      'test@[RFC-5322]-domain-literal]',
+      'test@[RFC-5322-[domain-literal]',
+      'test@[RFC-5322-\\␇-domain-literal]',
+      'test@[RFC-5322-\\␉-domain-literal]',
+      'test@[RFC-5322-\\]-domain-literal]',
+      'test@[RFC-5322-domain-literal\\]',
+      'test@[RFC-5322-domain-literal\\',
+      'test@[RFC␠5322␠domain␠literal]',
+      'test@[RFC-5322-domain-literal]␠(comment)',
+      '@iana.org',
+      'test@.org',
+      '""@iana.org',
+      '"\\"@iana.org',
+      '()test@iana.org',
+      'test@iana.org␍',
+      '␍test@iana.org',
+      '"␍test"@iana.org',
+      '(␍)test@iana.org',
+      'test@iana.org(␍)',
+      '␊test@iana.org',
+      '"␊"@iana.org',
+      '"\\␊"@iana.org(␊)',
+      '␇@iana.org',
+      'test@␇.org',
+      '"␇"@iana.org',
+      '"\\"@iana.org',
+      '(␇)test@iana.org',
+      '␍␊test@iana.org',
+      '␍␊␠␍␊test@iana.org',
+      '␠␍␊test@iana.org',
+      '␠␍␊␠test@iana.org␠␍␊',
+      '␠␍␊test@iana.org␠␍␊',
+      '␍␊test@iana.org␠␍␊',
+      '␍␊␠test@iana.org',
+      'test@iana.org␍␊␠',
+      'test@iana.org␍␊␠␍␊',
+      '␠test@iana.org␍␊',
+      'test@iana.org␍␊',
+      '␠␍␊test@iana.org␠␍␊',
+      'test@iana.org␠␍␊',
+      '␠test@iana.org␠␍␊',
+      '␠␍␊test@iana.org␠␍␊',
+      '␍␊test@iana.org␠␍␊',
+      'test@iana.org␠',
+      'test@[IPv6:1::2:]',
+      '"test\\"@iana.org',
+      'test@iana/icann.org',
+      'test.(comment)test@iana.org'
+    ].forEach(function(value){
+      it("'"+value+"'", testFail(validators.email, value))
+    })
+  })
+})
+
 function testOk( validator, value ){
   return function(){
     validator(value)
