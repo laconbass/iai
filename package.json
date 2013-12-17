@@ -4,7 +4,7 @@
   "description": "@laconbass' web development philosophy in a node.js package",
   "main": "lib/iai.js",
   "scripts": {
-    "test": "node node_modules/.bin/mocha"
+    "test": "make test"
   },
   "keywords": [
     "iai"
