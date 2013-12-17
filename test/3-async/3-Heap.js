@@ -93,6 +93,18 @@ describe( "Heap instances", function(){
         done();
       })
     })
+    it( "should throw TypeError if given argument is not a function", function(){
+      var heap = this.heap;
+      assert.throws(function(){
+        heap.task({});
+      }, TypeError)
+    })
+    it( "should throw TypeError if given function length is 0", function(){
+      var heap = this.heap;
+      assert.throws(function(){
+        heap.task( function(){} );
+      }, TypeError)
+    })
   })
 
   describe( "#then", function(){

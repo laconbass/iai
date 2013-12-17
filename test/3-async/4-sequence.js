@@ -5,6 +5,11 @@ var iai = require( '../..' )
 ;
 
 describe( "sequence", function(){
+  it( "should throw TypeError if argument 2 or 3 is not a function", function(){
+    assert.throws(function(){  sequence([]), TypeError  });
+    assert.throws(function(){  sequence([], function(){}), TypeError  });
+    assert.throws(function(){  sequence([], null, function(){}), TypeError  });
+  })
   it( "should execute step once for each item in array", function(done){
     sequence( [1, 2, 3], function( key, val, next ){
       assert.equal( parseInt(key)+1, val, "step "+val );
@@ -48,5 +53,12 @@ describe( "sequence", function(){
         done();
       }
     );
+  })
+  it( "should fail with TypeError if next is called with a non-error", function(done){
+    sequence([1,2,3], function(k,v,next){ next("bad idea"); }, function(err){
+      assert.instanceOf(err, TypeError);
+      assert.match(err.message, /received non-error/)
+      done();
+    })
   })
 })
