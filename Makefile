@@ -16,6 +16,8 @@ default:
 	@exit 1
 
 coverage:
+	@echo "Ensuring all tests succeed..."
+	@make test-once || (echo "Some test did not succeed. Abort" && exit 1)
 	@echo "Ensuring lcov is present..."
 	@type lcov >/dev/null 2>&1\
 	 && echo "lcov present."\
@@ -40,7 +42,10 @@ clean:
 	@rm -rf $(REPORTS)
 
 test:
-	@$(MOCHA) -R spec --bail! --watch $(TESTS)
+	@$(MOCHA) -R spec --bail --watch $(TESTS)
+
+test-once:
+	@$(MOCHA) -R dot --bail $(TESTS)
 
 show-test-files:
 	@echo $(TESTS) | tr " " "\n"
