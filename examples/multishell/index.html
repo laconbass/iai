@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/WebShellClient.js"></script>
+        <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    </head>
+    <body>
+        <fieldset>
+            <legend>Root shell</legend>
+            <div id="shell1" class="shell"></div>
+        </fieldset>
+        <fieldset>
+            <legend>Bash shell</legend>
+            <div id="shell2" class="shell"></div>
+        </fieldset>
+        <script>
+            /**
+             * create WebShell
+             */
+            //var shell1 = WebShell( "shell1", "http://iai.localhost.dev:8080" );
+            var shell1 = WebShell( "shell1" );
+            var shell2 = WebShell( "shell2", "/bash" );
+
+        </script>
+    </body>
+</html>

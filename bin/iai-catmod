@@ -1,0 +1,29 @@
+#!/usr/bin/node
+
+var indent = 4
+  , relativeFilename = process.argv[2]
+  , join = require( 'path').resolve
+  , modName = require.resolve( join( './', relativeFilename ) )
+  , mod = require( modName)
+;
+var stringified = JSON.stringify( mod, function replacer( key, val ) {
+  if( 'function' === typeof val ) {
+    var name, obj = {};
+    for( name in val ) {
+      obj[name] = val[name];
+    }
+    return obj;
+  }
+  return val;
+ 
+}, indent );
+
+console.log( '*****************************' );
+console.log( '** iai module inspect tool **' );
+console.log( '*****************************' );
+console.log( 'File: %s', modName );
+console.log( '- - - - - - - - - - - - - - -' );
+console.log( stringified );
+console.log( '- - - - - - - - - - - - - - -' );
+console.log( mod.toString() );
+console.log( '*****************************' );

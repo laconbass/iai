@@ -41,8 +41,8 @@ describe( "ErrorList", function(){
   it( "should return ErrorList instances", function(){
     assert.instanceOf( ErrorList( BaseError ), ErrorList );
   })
-  it( "should have a message property being an empty string", function(){
-    assert.equal( ErrorList(BaseError).message, "" );
+  it( "should have a message property being...", function(){
+    assert.equal( ErrorList(BaseError).message, "There are some errors." );
   })
   it( "should have a stack property", function(){
     assert.isDefined( ErrorList(BaseError).stack );
@@ -80,8 +80,20 @@ describe( "ErrorList", function(){
       }
       assert.equal( list.length, messages.length, "lengths should match")
     })
+    it( "should return the list instance", function(){
+      var list = ErrorList(BaseError)
+        , err = BaseError('test')
+      ;
+      assert.instanceOf( list.push(err), ErrorList );
+      assert.deepEqual( list.push(err), list );
+    });
     it( "should properly increment list.length", function(){
-
+      var err = BaseError("testing")
+        , list = ErrorList(BaseError)
+      ;
+      for( var x = 1; x < 10; x++ ){
+        assert.equal( list.push(err).length, x, "iteration"+x );
+      }
     })
   })
 
@@ -115,6 +127,12 @@ describe( "ErrorList", function(){
     })
   })
 
+  describe('#each', function(){
+    it( "should be a function", function(){
+      assert.isFunction( ErrorList(BaseError).each );
+    })
+  })
+
   describe("#toString", function(){
     it("should return '<name> (empty)' if list is empty", function(){
       var str = ErrorList(BaseError).toString();
@@ -132,10 +150,10 @@ describe( "ErrorList", function(){
       assert.equal( list.toString(),
 "\
 BaseErrorList\n\
-  something happened\n\
-  foo\n\
-  bar\n\
-  yeah!\n\
+  BaseError: something happened\n\
+  BaseError: foo\n\
+  BaseError: bar\n\
+  BaseError: yeah!\n\
 " )
     })
   })

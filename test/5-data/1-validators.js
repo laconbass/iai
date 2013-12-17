@@ -2,35 +2,9 @@ var assert = require("chai").assert
   , iai = require("../..")
   , test = iai( "test" )
   , validators = iai( "data/validators" )
+  , BaseError = iai("core/BaseError")
   , ValidationError = validators
 ;
-
-describe( "ValidationError", function(){
-  it( "should be a function", function(){
-    assert.isFunction( ValidationError );
-  })
-  it( "should return Error instances", function(){
-    assert.instanceOf( ValidationError("other check"), Error )
-  })
-  it( "should return ValidationError instances", function(){
-    assert.instanceOf( ValidationError("testing"), ValidationError );
-  })
-  it( "should have a message property", function(){
-    var msg = "something went wrong :S";
-    assert.equal( ValidationError(msg).message, msg );
-  })
-  it( "should have a stack property", function(){
-    assert.isDefined( ValidationError("check").stack );
-  })
-  it( "should have a name property being 'ValidationError'", function(){
-    var err = ValidationError("something");
-    assert.equal( err.name, "ValidationError" );
-  })
-  it( "should have a proper string representation", function(){
-    var err = ValidationError("Oops! Something went wrong :(");
-    assert.equal( err.toString(), "ValidationError: Oops! Something went wrong :(" )
-  })
-})
 
 describe( "RegExpValidator", function(){
   it( "should be a function that returns a function", function(){

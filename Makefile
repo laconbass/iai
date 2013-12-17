@@ -40,7 +40,7 @@ clean:
 	@rm -rf $(REPORTS)
 
 test:
-	$(MOCHA) -R spec --bail! --watch $(TESTS)
+	@$(MOCHA) -R spec --bail! --watch $(TESTS)
 
 show-test-files:
 	@echo $(TESTS) | tr " " "\n"

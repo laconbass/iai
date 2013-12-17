@@ -3,6 +3,7 @@ var assert = require('chai').assert
   , test = iai('test')
   , Field = iai('data/Field')
   , Schema = iai('data/Schema')
+  , SchemaValidationError = iai('data/SchemaValidationError')
 ;
 
 describe( 'Schema', function(){
@@ -26,6 +27,10 @@ describe( 'Schema', function(){
       password: Field.Text({ encrypt: "sha1" })
     })
     ;
-    schema.validate( {}, done );
+    schema.validate( {}, function(err, cleaned){
+      assert.instanceOf( err, SchemaValidationError, "error should be present" );
+      assert.isNull( cleaned, "cleaned data should be null when failed" );
+      console.dir( err.map )
+    });
   })
 })
