@@ -22,9 +22,9 @@
     "mocha-istanbul": "~0.2.0"
   },
   "dependencies": {
-    "iai-is": "*",
+    "iai-is": "1.x",
     "iai-loader": "*",
-    "iai-oop": "1.0.0",
+    "iai-oop": "1.x",
     "iai-util": "*",
     "commander": "~2.1.0",
     "isemail": "~0.1.0"
