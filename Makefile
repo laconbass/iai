@@ -9,7 +9,7 @@ ISTANBUL=node_modules/.bin/istanbul
 # test files to be executed
 TESTS=$(shell find test/ -name "*.js" | sort)
 # directory where coverage report is stored once generated
-REPORTS="coverage-reports"
+REPORTS="coverage-report"
 
 default:
 	@echo "Specify an action."
@@ -42,10 +42,10 @@ clean:
 	@rm -rf $(REPORTS)
 
 test:
-	@$(MOCHA) -R spec --bail --watch $(TESTS)
+	@$(MOCHA) -R min --bail --watch $(TESTS)
 
 test-once:
-	@$(MOCHA) -R dot --bail $(TESTS)
+	@$(MOCHA) -R progress --bail $(TESTS)
 
 show-test-files:
 	@echo $(TESTS) | tr " " "\n"

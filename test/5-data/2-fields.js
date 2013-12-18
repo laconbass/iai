@@ -6,7 +6,7 @@ var assert = require('chai').assert
   , ValidationError = iai('data/ValidationError')
 ;
 
-describe( 'Field', function(){
+describe.skip( 'Field', function(){
   it( 'should be a builder', function(){
     test.builder( Field, [] );
   })

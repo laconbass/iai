@@ -2,9 +2,30 @@ var assert = require("chai").assert
   , iai = require("../..")
   , test = iai( "test" )
   , validators = iai( "data/validators" )
-  , BaseError = iai("core/BaseError")
   , ValidationError = validators
 ;
+
+function testOk( validator, value ){
+  return function(){
+    validator(value)
+  }
+}
+
+function testFail( validator, value, err_match ){
+  return function(){
+    try {
+      validator(value);
+      throw Error("expecting ValidationError");
+    } catch(err) {
+      assert.instanceOf( err, ValidationError );
+      if( err_match ){
+        assert.match( err.message, err_match, "bad error message")
+      }
+    }
+  }
+}
+
+//describe( "empty")
 
 describe( "RegExpValidator", function(){
   it( "should be a function that returns a function", function(){
@@ -18,6 +39,7 @@ describe( "RegExpValidator", function(){
     it( "should pass the following cases", function(){
       validator( "RegularExpresion" )
     })
+
     it( "should throw on the following cases", function(){
       var cases = test( /.*/ );
       for( var caseName in cases ){
@@ -212,19 +234,7 @@ describe( "EmailValidator", function(){
   })
 })
 
-function testOk( validator, value ){
-  return function(){
-    validator(value)
-  }
-}
 
-function testFail( validator, value ){
-  return function(){
-    assert.throws(function(){
-      validator( value );
-    }, ValidationError);
-  }
-}
 
 function autoTest( name, validator, regexp ){
   describe( name, function(){
@@ -277,9 +287,7 @@ describe("Number validator", function(){
   describe( "max_value feature", function(){
     var validator = validators.Number({ max_value: 9 });
     function throws( value, message, err_match ){
-      assert.throws(function(){
-        validator( value );
-      }, ValidationError, err_match || /Garanta que este valor sexa menor ou igual a/, message );
+      testFail( validator, value, /Garanta que este valor sexa menor ou igual a/ )();
     }
     it( "should fail given a number greater than max_value", function(){
       throws( "10", "string '10'" );
@@ -301,9 +309,7 @@ describe("Number validator", function(){
   describe( "min_value feature", function(){
     var validator = validators.Number({ min_value: 2 });
     function throws( value, message, err_match ){
-      assert.throws(function(){
-        validator( value );
-      }, ValidationError, err_match || /Garanta que este valor sexa maior ou igual a/, message );
+      testFail( validator, value, /Garanta que este valor sexa maior ou igual a/ )();
     }
     it( "should fail given a number smaller than min_value", function(){
       throws( 1, "number 1" );
@@ -329,9 +335,7 @@ describe( "Length validator", function(){
   describe( "max_value feature", function(){
     var validator = validators.Length({ max_value: 9 });
     function throws( value, message, err_match ){
-      assert.throws(function(){
-        validator( value );
-      }, ValidationError, err_match || /Garanta que a lonxitude deste valor sexa menor ou igual a/, message );
+      testFail( validator, value, /Garanta que a lonxitude deste valor sexa menor ou igual a/ )();
     }
     it( "should fail given anything with length greater than limit", function(){
       throws( "1234567890", "10 characters" );
@@ -351,9 +355,7 @@ describe( "Length validator", function(){
   describe( "min_value feature", function(){
     var validator = validators.Length({ min_value: 4 });
     function throws( value, message, err_match ){
-      assert.throws(function(){
-        validator( value );
-      }, ValidationError, err_match || /Garanta que a lonxitude deste valor sexa maior ou igual a/, message );
+      testFail( validator, value, /Garanta que a lonxitude deste valor sexa maior ou igual a/ )();
     }
     it( "should fail given somthing with length smaller than min_value", function(){
       throws( "0", "1 character" );

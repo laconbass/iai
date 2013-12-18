@@ -6,7 +6,7 @@ var assert = require('chai').assert
   , SchemaValidationError = iai('data/SchemaValidationError')
 ;
 
-describe( 'Schema', function(){
+describe.skip( 'Schema', function(){
   it( 'should be a builder', function(){
     test.builder( Schema, [] );
   })
