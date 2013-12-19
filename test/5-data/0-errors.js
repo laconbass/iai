@@ -18,7 +18,7 @@ describe( "ValidationError", function(){
   })
 })
 
-describe( "ValidationErrorList", function(){
+describe.skip( "ValidationErrorList", function(){
   it( "should be a function", function(){
     assert.isFunction( ValidationErrorList );
   })

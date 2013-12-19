@@ -1,18 +1,25 @@
 var assert = require('chai').assert
-  , iai = require('../..')
+  , iai = require('iai')
   , test = iai('test')
   , Field = iai('data/Field')
   , fields = iai('data/fields')
   , ValidationError = iai('data/ValidationError')
 ;
 
-describe.skip( 'Field', function(){
+describe( 'Field', function(){
   it( 'should be a builder', function(){
     test.builder( Field, [] );
   })
-  it( 'should have the following methods', function(){
-    test.methods( Field(), "validate" )
+  it( 'should return instances of Data', function(){
+    assert.instanceOf( Field(), iai('data/Data') )
   })
+  it( 'should have a proper string representation', function(){
+    assert.equal( Field()+'', '<Field []>' )
+    assert.equal( Field({ blank: 1 })+'', '<Field [blank]>' )
+    assert.equal( Field({ unique: 1 })+'', '<Field [unique]>' )
+    assert.equal( Field({ blank: 1, unique: 1 })+'', '<Field [blank, unique]>' )
+  })
+
   describe('blank feature', function(){
     it("should be disabled by default", function(){
       var field = Field();
@@ -22,6 +29,7 @@ describe.skip( 'Field', function(){
       var field = Field({ blank: true });
       assert.isTrue( field.blank )
     })
+
     var filled = [ "something", { a: 1 }, [1,2], new Date() ]
       , empty = ["", [], {}, undefined, null ]
     ;
