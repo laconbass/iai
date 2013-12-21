@@ -19,7 +19,8 @@
     "sqlite3": "~2.1.19",
     "jade": "~0.35.0",
     "istanbul": "~0.2.0",
-    "mocha-istanbul": "~0.2.0"
+    "mocha-istanbul": "~0.2.0",
+    "mocha-pending": "~1.0.0"
   },
   "dependencies": {
     "iai-is": "1.x",

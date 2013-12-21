@@ -50,4 +50,7 @@ test-once:
 show-test-files:
 	@echo $(TESTS) | tr " " "\n"
 
+pending:
+	@$(MOCHA) -R mocha-pending $(TESTS) | more
+
 .PHONY: coverage clean test show-test-files
