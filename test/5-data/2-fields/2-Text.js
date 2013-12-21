@@ -97,5 +97,29 @@ describe( 'TextField', function(){
       var field = Text({ min_length: 0 });
       assert.equal( field.min_length, 0 );
     })
+    describe("when set to 14", function(){
+      var field = Text({ min_length: 14 })
+      it("should successfully validate an string with 14 characters", function(done){
+        field.validate("12345678901234", function(err, data){
+          assert.isNull(err, "bad error");
+          assert.equal(data, "12345678901234", "bad data");
+          done()
+        })
+      })
+      it("should fail validating an string with 13 characters", function(done){
+        field.validate("1234567890123", function(err, data){
+          assert.instanceOf(err, ValidationError, "bad error");
+          assert.isNull(data, "bad data");
+          done()
+        })
+      })
+      it("should success validating an string with 15 characters", function(done){
+        field.validate("123456789012345", function(err, data){
+          assert.isNull(err, "bad error");
+          assert.equal(data, "123456789012345", "bad data");
+          done()
+        })
+      })
+    })
   })
 })
