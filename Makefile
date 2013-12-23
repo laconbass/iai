@@ -1,69 +1,75 @@
 #!/bin/bash
 
 #
-# Node executables
-
-BIN=$(shell npm bin)
-MOCHA=$(BIN)/mocha
-
-#
-# Inputs
+# Input
 
 # test files to be executed
 TESTS=$(shell find test/ -name "*.js" | sort)
 # input source code for report tools
 LIB=lib
+# input source for document generator
+DOC_IN="lib/*.js,lib/async/*.js,lib/core/*.js/lib/data/*.js"
+# main file for document generator
+DOC_MAIN=lib/iai.js
 
 #
-# Reports
+# Output
 
 #directory where reports are stored
 REPORTS=reports
-# directory where coverage report is stored once generated
-REPORT_COV=$(REPORTS)/coverage
-# directory where complexity report is stored once generated
-REPORT_CPX=$(REPORTS)/complexity
 # browser to use when opening the reports
 BROWSER=google-chrome
 
 #
 # Utils
 
-# checks whatever a system util is present
-define ensure_apt_present
-  @echo ""\
-  && echo "Ensuring apt package '$1' is present..."\
-  && type $1 >/dev/null 2>&1\
-  && echo "'$1' is present."\
-  || (
-    echo ""\
-    && echo "'$1' not present."\
-    && echo "run:"\
-    && echo "    apt-get install $1"\
-    && echo ""\
+# Path of node executables
+BIN=$(shell npm bin)
+
+# checks whatever a npm package is present
+define ensure_npm_present
+  @echo "\nEnsuring npm package '$1' is present..."\
+  && npm ls $1 >/dev/null 2>&1 && echo "'$1' is present.\n"\
+  || (\
+    echo "'$1' not present.\nrun:\n    npm install $1 --save-dev\n"\
     && exit 1\
   )
 endef
 
-# checks whatever a npm package is installed
-define ensure_npm_present
-  @echo ""\
-  && echo "Ensuring npm package '$1' is present..."\
-  && npm ls $1 >/dev/null 2>&1\
-  && echo "npm package '$1' is present."\
+# checks whatever a system util is present
+define ensure_apt_present
+  @echo "\nEnsuring apt package '$1' is present..."\
+  && type $1 >/dev/null 2>&1 && echo "'$1' is present.\n"\
   || (\
-    echo "npm package '$1' not present."\
-    && echo "run:"\
-    && echo "    npm install $1 --save-dev"\
-    && echo ""\
+    echo "'$1' not present.\nrun:\n    apt-get install $1\n"\
     && exit 1\
   )
+endef
+
+# opens something in the browser
+define open_in_browser
+  @echo "Opening '$1' in the browser..." && $(BROWSER) $1
 endef
 
 all:
 	$(info Plase specify an action)
 	@exit
 
+# directory where docs are stored once generated
+DOC_DIR=docs/doxit
+documentation:
+	$(call ensure_npm_present,doxit)
+	@echo "Delete '$(DOC_DIR)' directory" && rm -rf $(DOC_DIR)
+	@echo "Generating documentation with doxit..."
+	@$(BIN)/doxit\
+          -i $(DOC_IN)\
+          -I "lib/iai.js"\
+          -o $(DOC_DIR)\
+	  -t "$(shell basename $(shell pwd)) documentation"\
+	|| (echo "\nFail. See details above\n" && exit 1)
+	$(call open_in_browser,$(DOC_DIR)/index.html)
+
+MOCHA=$(BIN)/mocha
 test:
 	@$(MOCHA) -R min --bail --watch $(TESTS)
 
@@ -85,17 +91,20 @@ $(REPORTS): clean
 	$(info Create '$(REPORTS)' directory)
 	@mkdir $(REPORTS)
 
+# directory where complexity report is stored once generated
+REPORT_CPX=$(REPORTS)/complexity
 complexity: $(REPORTS)
 	$(call ensure_npm_present,plato)
 	@echo "Generating complexity report with plato..."
 	@$(BIN)/plato -r -d $(REPORT_CPX) $(LIB) $(TESTS) >/dev/null 2>&1
-	@echo "Opening report in $(BROWSER)..."
-	@$(BROWSER) $(REPORT_CPX)/index.html
+	$(call open_in_browser,$(REPORT_CPX)/index.html)
 
 #
-# Inspired by a superb post found on
+# Inspired by (and modified from) a superb post found on
 # http://sergimansilla.com/blog/test-coverage-node/
-#
+
+# directory where coverage report is stored once generated
+REPORT_COV=$(REPORTS)/coverage
 coverage: test-once $(REPORTS)
 	$(call ensure_apt_present,lcov)
 	$(call ensure_npm_present,istanbul)
@@ -115,7 +124,6 @@ coverage: test-once $(REPORTS)
 	@echo Restore original code && mv $(LIB)-orig $(LIB)
 	@echo Generate html report\
 	 && genhtml $(REPORT_COV)/lcov.info --output-directory $(REPORT_COV)/
-	@echo Opening coverage report...\
-	 && $(BROWSER) $(REPORT_COV)/index.html
+	$(call open_in_browser,$(REPORT_COV)/index.html)
 
-.PHONY: coverage clean test show-test-files
+.PHONY: coverage clean test
