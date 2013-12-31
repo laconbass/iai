@@ -205,3 +205,107 @@ callbacks on each `operation` call instead reusing them.
 Within this context makes sense the use of some functional utility
 to *define those methods that effectively are asynchronous code flows*.
 Sometimes code must be complex, but never should be unreadable.
+
+## Objectives
+
+The utility function should:
+
+* Produce a flow, a function that executes multiple async operations.
+* Provide a simple API to define legibly the operations performed by
+  the flow (hereafter, *steps*, for brevity).
+* Reduce the amount of written callbacks needed to execute a flow.
+  Ideally, it should reduce them from 1 callback per step to 1 callback
+  per entire flow.
+* Ease the error handling. Any flow is successfully executed when
+  there are no errors notified on any async operation that it performs.
+  When an error is notified the flow fails, stoping inmediately.
+* Ensure each step is executed within the context of the flow call.
+* Provide a channel to communicate data to the first step, from each
+  step to the next one and from the last step to the flow callback.
+
+## API Examples
+
+### Simple 3-operation example taken from *writing callbacks*
+
+    MyApi.prototype.operation = flow()
+      .step(operation1)
+      .step(function (results1, next) {
+        var moreData = doSomethingWith(results1);
+        next( null, moreData );
+      })
+      .step(operation2)
+      .step(function (results2, next) {
+        doSomethingWith(results2);
+        next();
+      })
+      .step(operation3)
+      .step(function (next) {
+        var maybeSomeResults = "are retrieved here";
+        next(null, maybeSomeResults);
+      })
+    ;
+
+    // being api an instance of MyApi...
+    api.operation(someData, function (err) {
+      if (err) {
+        // handle it and return
+      }
+      // success
+    });
+
+### Sequentially iteration example
+
+    MySchema.prototype.validate = flow()
+      .step(function(data, next){
+        if ( !this.fields ){
+          return next( Error("WTF?" );
+        }
+        next(null, this.fields, data);
+      })
+      .iterate(function (fieldName, field, data, next) {
+        field.validate(data[fieldName], next);
+      })
+    ;
+
+    // being schema an instance of MySchema...
+    schema.validate(inputData, function (err) {
+      if (err) {
+        // handle it and return
+      }
+      // validation succeed!
+    });
+
+### Parallel iteration example
+
+    MySchema.prototype.validate = flow()
+      .step(function(data, fieldNames, next){
+        if ( !fields ){
+          fields = this.fields
+        } else {
+          var names = fields;
+          fields = {};
+          Object
+            .keys(this.fields)
+            .filter(function (fieldName) {
+              return fieldName in fields;
+            })
+            .forEach(function (fieldName) {
+              fields[ fieldName ] = this.fields[ fieldName ];
+            }, this)
+          ;
+        }
+        next(null, fields, data);
+      })
+      .together(function (fieldName, field, data, work) {
+        field.validate(data[fieldName], work());
+      })
+    ;
+
+    // being schema an instance of MySchema...
+    schema.validate(inputData, function (err) {
+      if (err) {
+        // handle it and return
+      }
+      // validation succeed!
+    });
+
