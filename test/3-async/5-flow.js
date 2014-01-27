@@ -95,6 +95,11 @@ describe('async/flow instances', function(){
   })
   describe('#together', function(){
     it("should paralelize work through a worker function")
+    it("should push a function on the stack")
+    it("should return an object")
+    describe("returned object", function(){
+      it("#worker")
+    })
   })
   describe('when executed', function(){
     it('should sequentially call each function on the stack');
