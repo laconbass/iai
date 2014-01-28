@@ -29,6 +29,12 @@ describe( "the iai function", function(){
     })
   })
 
+  describe( "given an absolute path", function(){
+    it( "should return a component", function(){
+      assert.deepEqual( iai(__dirname), iai('core/Component')(__dirname) )
+    })
+  })
+
   describe( "given a module object", function(){
     it( "should return a loader function", function(){
       assert.equal( iai(module).toString(), iai('loader')(module) );
@@ -236,4 +242,5 @@ describe.skip( "iai.api instances", function(){
 
 
 
-
+
+
