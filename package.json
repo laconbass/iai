@@ -31,7 +31,8 @@
     "iai-util": "*",
     "commander": "~2.1.0",
     "isemail": "~0.1.0",
-    "debug": "^0.7.4"
+    "debug": "^0.7.4",
+    "chokidar": "^0.8.1"
   },
   "directories": {
     "bin": "./bin"
