@@ -13,3 +13,6 @@
 [submodule "node_modules/iai-test"]
 	path = node_modules/iai-test
 	url = https://github.com/laconbass/iai-test.git
+[submodule "node_modules/iai-schema"]
+	path = node_modules/iai-schema
+	url = https://github.com/laconbass/iai-schema.git
