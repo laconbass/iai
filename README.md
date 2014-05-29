@@ -2,7 +2,7 @@
 
 > As fast as say *iai*
 
-*iai* is a general purpose solution to automate the software development process
+*iai* is a ~~general purpose solution~~ tool to automate the software development process
 of web based applications, dramatically reducing the time needed to succesfully
 deliver ready-to-use features.
 
@@ -22,7 +22,7 @@ technologies possible.
 imagination, that will never learn the art and science of programming and
 will enjoy it forever.
 
-## Whant more?
+## Want more?
 
 Follow to [the project wiki] to learn more about iai and how it's being
 developed.
