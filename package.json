@@ -11,28 +11,29 @@
   ],
   "author": "Lorenzo García Rivera",
   "devDependencies": {
-    "mocha": "1.12.x",
-    "chai": "~1.8.1",
+    "chai": "^1.9.1",
+    "doxit": "~1.1.2",
     "file": "0.2.x",
     "iai-test": "*",
-    "zombie": "~2.0.0-alpha24",
-    "sqlite3": "~2.1.19",
-    "jade": "~0.35.0",
     "istanbul": "~0.2.0",
+    "jade": "~0.35.0",
+    "mocha": "1.12.x",
     "mocha-istanbul": "~0.2.0",
     "mocha-pending": "~1.0.0",
     "plato": "~0.6.2",
-    "doxit": "~1.1.2"
+    "sqlite3": "~2.1.19",
+    "zombie": "~2.0.0-alpha24"
   },
   "dependencies": {
+    "chokidar": "^0.8.1",
+    "commander": "~2.1.0",
+    "debug": "^0.7.4",
     "iai-is": "1.x",
     "iai-loader": "*",
     "iai-oop": "1.x",
     "iai-util": "*",
-    "commander": "~2.1.0",
     "isemail": "~0.1.0",
-    "debug": "^0.7.4",
-    "chokidar": "^0.8.1"
+    "stack-trace": "0.0.9"
   },
   "directories": {
     "bin": "./bin"
