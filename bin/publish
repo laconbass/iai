@@ -1,0 +1,84 @@
+#!/usr/bin/env node
+
+/**
+ * # iai-catmod
+ *
+ * utility to inspect the contents of a common js module
+ */
+
+// DEPENDENCIES
+
+var fs = require('fs');
+var path = require('path');
+var format = require('util').format;
+var logger = require('../src/util/logger');
+
+// UTILITIES
+
+var log = logger( 'blue' ), info = logger( 'white' );
+var error = logger( 'red' ), warn = logger( 'yellow' );
+
+// ARGV
+
+var argv = process.argv.slice( 2 );
+if( !argv.length || argv.length > 1 ){
+  console.log('Usage: publish {filename}');
+  process.exit(1);
+}
+
+var filename = path.resolve( process.cwd(), argv[0] );
+
+// BOOTSTRAP
+
+try {
+  filename = require.resolve( filename );
+} catch( err ){
+  error( '' );
+  error( 'Fatal: An error was thrown while parsing the file' );
+  error( '      %s', filename );
+  error( err.stack );
+  process.exit( 1 );
+}
+
+
+var dirname = path.dirname(filename)
+  , rawname = path.basename(filename, '.js')
+  , extname = path.extname(filename)
+;
+
+function rescape( str ){
+  return str.replace('.', '\\.');
+}
+
+log( 'filename = "%s"', filename );
+log( ' dirname = "%s"', dirname );
+log( ' rawname = "%s"', rawname );
+log( ' extname = "%s"', extname );
+
+var pattern = RegExp( format(
+  '^%s(:?@([\\d\\.]+))?%s$',
+  rescape(rawname),
+  rescape(extname)
+) );
+
+fs.readdir( dirname, function( err, files ){
+  if( err ){
+    error( err.stack || err );
+    process.exit(1);
+  }
+  files = files.filter( pattern.test, pattern );
+  log( 'found %d file(s): %s', files.length, files.join(', ') );
+
+  // TODO versions...
+  // vers = files.map( pattern.match, pattern );
+
+  var newname = format( '%s@%d%s', rawname, files.length, extname );
+  newname = path.resolve( dirname, newname );
+  log( 'will be pubished as %s', newname );
+
+  fs.createReadStream( filename ).pipe( fs.createWriteStream( newname, {
+    flags: 'wx', mode: 00400 | 00040 | 00004
+  }) );
+  log( 'OK' );
+});
+

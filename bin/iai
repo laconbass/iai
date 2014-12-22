@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+
+var assert = require('assert');
+
+var filename;
+
+try {
+  filename = require.resolve( 'iai' );
+} catch( e ) {
+  throw Error(
+    "given 'iai', require.resolve should not throw\n"
+    + err.stack
+  );
+}
+
+var express = require('express');
+
+var app = express();
+
+app.use(function( req, res ){
+  res.end('OK');
+});
+
+
+
+var fs = require('fs');
+function rstat( pathname, callback ){
+  fs.stat( pathname, function( err, stat ){
+    if( err ){
+      return callback( err );
+    }
+  })
+}
+
+app.listen( 8080, function(){
+  console.log('server listening on http://localhost:8080');
+});
+

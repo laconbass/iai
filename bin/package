@@ -1,0 +1,74 @@
+#!/usr/bin/env node
+
+/**
+ * # package
+ * 
+ * shows information about the package at current working directory
+ */
+
+// DEPENDENCIES
+
+var resolve = require('path').resolve;
+var format = require('util').format;
+
+// ARGV
+
+var argv = process.argv.slice( 2 );
+if( argv.length > 1 || argv[0] == '--usage' || argv[0] == '--help' ){
+  console.log('Usage: package [dirname]');
+  process.exit(1);
+}
+
+try {
+  var path = resolve( process.cwd(), argv[0] || '', 'package.json' );
+  delete require.cache[ path ];
+  var pkg = require( path );
+} catch( err ){
+  if( err.code != 'MODULE_NOT_FOUND' ){
+    throw err;
+  }
+  console.log( process.cwd() + argv[0] + ' is not a commonjs package' );
+  process.exit(1);
+}
+
+console.log( '#', path );
+console.log( 'basic info:' );
+console.log( '  name: ' + pkg.name );
+console.log( '  ver : ' + pkg.version );
+console.log( '  desc: ' + pkg.description )
+console.log();
+
+console.log( 'entry points:' );
+console.log( '  main: ' + pkg.main );
+console.log( '  browser: ' + pkg.browser );
+console.log();
+
+function describe( dependencies ){
+  return dependencies && Object.keys( dependencies ).map(function( name ){
+    return name + '@' + dependencies[ name ];
+  }).join(', ') || undefined;
+}
+console.log( 'dependencies (need=normal, bund=bundle, opt=optional)' );
+console.log( '  need:', describe(pkg.dependencies) );
+console.log( '   dev:', describe(pkg.devDependencies) );
+console.log( '  peer:', describe(pkg.peerDependencies) );
+console.log( '  bund:', describe(pkg.bundledDependencies) );
+console.log( '   opt:', describe(pkg.optionalDependencies) );
+console.log();
+
+if( pkg.directories ){
+  console.log( 'structure: ' + JSON.stringify(pkg.directories, null, 2) );
+  console.log();
+} else {
+  console.log( 'no directories defined' );
+}
+
+if( pkg.scripts ){
+  console.log();
+  console.log( 'relevant scripts:' );
+  console.log( '  start: ' + pkg.scripts.start );
+  console.log( '  test : ' + pkg.scripts.test );
+} else {
+  console.log( 'no scripts defined' );
+}
+

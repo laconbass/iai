@@ -1,0 +1,60 @@
+#!/usr/bin/env node
+
+/**
+ * # iai-catmod
+ *
+ * utility to inspect the contents of a common js module
+ */
+
+// DEPENDENCIES
+
+var spawn = require('child_process').spawn;
+var watch = require('chokidar').watch;
+var format = require('util').format;
+var logger = require('../src/util/logger');
+
+// UTILITIES
+
+var log = logger( 'gray' ), info = logger( 'blue' );
+var error = logger( 'red' ), warn = logger( 'yellow' );
+
+// ARGV
+
+var argv = process.argv.slice( 2 );
+if( !argv.length || argv.length > 1 ){
+  console.log('Usage: catmod {filename}');
+  process.exit(1);
+}
+
+var filename = require('path').resolve( process.cwd(), argv[0] );
+// TODO configurable indent?
+var indent = 4;
+
+// BOOTSTRAP
+
+try {
+  filename = require.resolve( filename );
+  var mod = require( filename );
+} catch( err ){
+  error( '' );
+  error( 'Fatal: An error was thrown while parsing the file' );
+  error( '      %s', filename );
+  error( err.stack );
+  process.exit( 1 );
+}
+
+var stringified = JSON.stringify( mod, function replacer( key, val ) {
+  if( 'function' === typeof val ) {
+    var name, obj = {};
+    for( name in val ) {
+      obj[name] = val[name];
+    }
+    return obj;
+  }
+  return val;
+}, indent );
+
+console.log( '#', filename );
+console.log( '##',  mod.toString() );
+console.log( stringified );
+
