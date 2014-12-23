@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+
+var assert = require('assert');
+
+var filename, iai;
+
+// FLOW
+
+console.log('hi there');
+
+try {
+  filename = require.resolve( 'iai' );
+} catch( err ) {
+  throw Error(
+    "given 'iai', require.resolve should not throw\n"
+    + err.stack
+  );
+}
+
+try {
+  iai = require( filename );
+} catch( err ) {
+  throw Error(
+    f( "given '%s', require should not throw\n", filename )
+    + err.stack
+  );
+}
+

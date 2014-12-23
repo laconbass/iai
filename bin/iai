@@ -1,38 +1,69 @@
 #!/usr/bin/env node
 
-var assert = require('assert');
+// VERBOSE REQUIRE
 
-var filename;
-
-try {
-  filename = require.resolve( 'iai' );
-} catch( e ) {
-  throw Error(
-    "given 'iai', require.resolve should not throw\n"
-    + err.stack
-  );
+function verboseRequire( ref ){
+  try {
+    var file = require.resolve( ref );
+  } catch( err ) {
+    throw Error(
+      "given '" + ref + "', require.resolve should not throw\n"
+      + err.stack
+    );
+  }
+  try {
+    return require( file );
+  } catch( err ) {
+    throw Error(
+      "given '" + file + "', require should not throw\n"
+      + err.stack
+    );
+  }
 }
 
-var express = require('express');
+// DEPENDENCIES
 
-var app = express();
+var iai = verboseRequire('iai');
 
-app.use(function( req, res ){
-  res.end('OK');
-});
+// IAI TESTS
+
+var assert = chai.assert;
+
+// WORKING FROM HERE
+
+console.log( 'hi there @', Date() );
+console.log( 'cwd is', process.cwd() );
+//var names = Object.getOwnPropertyNames( iai );
 
 
+// iai('src/util/logger')
 
+var f = require('util').format;
 var fs = require('fs');
-function rstat( pathname, callback ){
-  fs.stat( pathname, function( err, stat ){
-    if( err ){
-      return callback( err );
-    }
-  })
+var fileExists = fs.existsSync
+var logger = require('../src/util/logger');
+//var ansi = require('../src/util/ansi');
+var execute = require('../operation/execute');
+
+// UTILITIES
+
+var log = logger({ color: 'blue', clean: 1 })
+  , info = logger({ color: 'white', clean: 1 })
+  , error = logger({ color: 'red', clean: 1 })
+  , warn = logger({ color: 'yellow', clean: 1 })
+;
+
+// ENV
+
+var argv, iai, filename;
+
+// ARGV
+// TODO better argv description
+
+argv = process.argv.slice( 2 );
+if( argv.length == 1 && (argv[0] == '--help' || argv[0] == '--usage') ){
+  info('Usage: iai [optional input]');
+  process.exit(1);
 }
 
-app.listen( 8080, function(){
-  console.log('server listening on http://localhost:8080');
-});
 

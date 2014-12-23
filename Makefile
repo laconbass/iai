@@ -71,7 +71,7 @@ documentation:
 
 MOCHA=$(BIN)/mocha
 test:
-	@$(MOCHA) -R min --bail --watch $(TESTS)
+	@$(MOCHA) $(TESTS)
 
 test-once:
 	@echo Ensure all tests succeed\

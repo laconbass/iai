@@ -17,7 +17,7 @@
     "iai-test": "*",
     "istanbul": "~0.2.0",
     "jade": "~0.35.0",
-    "mocha": "1.12.x",
+    "mocha": "^2.1.0",
     "mocha-istanbul": "~0.2.0",
     "mocha-pending": "~1.0.0",
     "plato": "~0.6.2",

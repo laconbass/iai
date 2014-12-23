@@ -12,6 +12,7 @@ var spawn = require('child_process').spawn;
 var watch = require('chokidar').watch;
 var path = require('path');
 var format = require('util').format;
+var fileExists = require('fs').existsSync
 var logger = require('../src/util/logger');
 var ansi = require('../src/util/ansi');
 
@@ -33,7 +34,13 @@ if( !argv.length ){
 
 var filename = path.resolve( process.cwd(), argv.shift() );
 argv.unshift( filename );
-info('filename is', filename);
+
+if( fileExists(filename) ){
+  info('filename is', filename);
+} else {
+  error( 'Fatal error: The file %s does not exist', filename );
+  process.exit(1);
+}
 
 var isModule = path.extname(filename) == '.js';
 
