@@ -16,7 +16,7 @@ function verboseRequire( ref ){
   } catch( err ) {
     throw Error(
       "given '" + file + "', require should not throw\n"
-      + err.stack
+      + err.stack.split('\n').slice(5).join('\n')
     );
   }
 }
@@ -24,10 +24,6 @@ function verboseRequire( ref ){
 // DEPENDENCIES
 
 var iai = verboseRequire('iai');
-
-// IAI TESTS
-
-var assert = chai.assert;
 
 // WORKING FROM HERE
 
@@ -41,7 +37,7 @@ console.log( 'cwd is', process.cwd() );
 var f = require('util').format;
 var fs = require('fs');
 var fileExists = fs.existsSync
-var logger = require('../src/util/logger');
+var logger = require('../lib/util/logger');
 //var ansi = require('../src/util/ansi');
 var execute = require('../operation/execute');
 
