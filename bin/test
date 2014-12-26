@@ -14,7 +14,7 @@ var path = require('path');
 var format = require('util').format;
 var fileExists = require('fs').existsSync
 var logger = require('../lib/util/logger');
-var ansi = require('../lib/util/ansi');
+var ansi = require('../lib/tty/ansi');
 
 // UTILITIES
 

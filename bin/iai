@@ -27,39 +27,17 @@ var iai = verboseRequire('iai');
 
 // WORKING FROM HERE
 
-console.log( 'hi there @', Date() );
-console.log( 'cwd is', process.cwd() );
-//var names = Object.getOwnPropertyNames( iai );
-
-
-// iai('src/util/logger')
-
-var f = require('util').format;
-var fs = require('fs');
-var fileExists = fs.existsSync
-var logger = require('../lib/util/logger');
-//var ansi = require('../src/util/ansi');
-var execute = require('../operation/execute');
-
-// UTILITIES
-
-var log = logger({ color: 'blue', clean: 1 })
-  , info = logger({ color: 'white', clean: 1 })
-  , error = logger({ color: 'red', clean: 1 })
-  , warn = logger({ color: 'yellow', clean: 1 })
-;
-
-// ENV
-
-var argv, iai, filename;
-
 // ARGV
 // TODO better argv description
 
-argv = process.argv.slice( 2 );
+var argv = process.argv.slice( 2 );
 if( argv.length == 1 && (argv[0] == '--help' || argv[0] == '--usage') ){
   info('Usage: iai [optional input]');
   process.exit(1);
 }
 
+console.log( 'hi there @', Date() );
+console.log( 'cwd is', process.cwd() );
+
+iai.operation('bootstrap');
 
