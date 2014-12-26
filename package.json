@@ -28,6 +28,7 @@
     "chokidar": "^0.8.1",
     "commander": "~2.1.0",
     "debug": "^0.7.4",
+    "highland": "^2.2.0",
     "iai-is": "1.x",
     "iai-loader": "*",
     "iai-oop": "1.x",
