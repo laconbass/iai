@@ -70,15 +70,21 @@ var child = null;
 main();
 
 function main( ){
+  if( child ){
+    info( 'Killing child process to run again...' );
+    return child.kill( 'SIGUSR2' );
+  }
 
   if( isModule ){
     try {
       log( 'Requiring module to research dependencies\n* v *\n' );
       // Refresh require.cache before calling 'sources'
-      delete require.cache[filename];
-      require( filename );
+      delete require.cache[filename]; require( filename );
       log( '\n* ^ *\nRequire completed' );
       watcher( sources(require.main) );
+      // Remove require.cache after
+      delete require.cache[filename];
+
     } catch( e ){
       warn( "Error thrown during test:" );
       error( e.stack );
@@ -89,15 +95,13 @@ function main( ){
     watcher( sources(require.main).concat(filename) );
   }
 
-  if( child ){
-    info( 'Killing child process to run again...' );
-    return child.kill( 'SIGUSR2' );
-  }
   log( 'Spawning child process for %s\n* v *\n', filename );
-  child = spawn( 'node', argv, {
-    stdio: 'inherit',
-    env: { NODE_ENV: 'test' }
-  }).on( 'close', reboot ).on( 'error', handle );
+  var env = Object.create( process.env );
+  env.NODE_ENV = 'test';
+  child = spawn( 'node', argv, { stdio: 'inherit', env: env })
+    .on( 'close', reboot )
+    .on( 'error', handle )
+  ;
 }
 
 function reboot( code, signal ){

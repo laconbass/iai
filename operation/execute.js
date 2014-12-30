@@ -56,14 +56,13 @@ function execute( command ){
   }
 
   try {
-    argv.shift();
-    return value.apply( operation, argv );
+    return value.apply( operation, argv.slice(1) );
     // TODO ¿? check operation returns a DuplexStream instance?
     //assert( cmd instanceof stream.Duplex, 'must return a DuplexStream intance' );
   } catch( err ){
     return fail({
-      message: "execute('%s') throws:\n%s",
-      params: [ command, err.message || err ]
+      message: "can't run '%s', %s( ... ) throws:\n%s",
+      params: [ argv[0], value.name || value, err.message || err ]
     });
   }
 }

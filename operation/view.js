@@ -28,23 +28,25 @@ function view( ref ){
     , io = iai.flow()
     , ui = terminal( io )
   ;
-  io.on('error', function( err ){
-    console.log( 'view %s io stream notified an error:\n%s', ref, err.stack );
-    process.exit(1);
-  })
   view.render( meta, ui );
   meta.operation && execute( meta.operation )
-  meta.keymap && io.once('pipe', function( input ){
+  return io.once('pipe', function( input ){
+    if( !meta.keymap ){
+      throw Error('received a pipe for a view without keymap');
+    }
     if( input === process.stdin ){
-      keymap( ui, meta.keymap, function viewoption( command ){
+      keymap( ui, meta.keymap, function next( command ){
+        io.once('unpipe', function( src ){
+          assert( src === input );
+          console.log('pipe broken to delegate on', command);
+          input.pipe( execute(command) ).pipe( io );
+        });
         input.unpipe( io );
-        input.pipe( execute(command) )
       });
     } else {
       throw Error( "what to do if input is not process.stdin?" );
     }
   });
-  return io;
 }
 
 /**
@@ -61,9 +63,7 @@ view.read = function( ref ){
     delete require.cache[ ref ];
     return require( ref );
   } catch( err ){
-    if( err.code != 'MODULE_NOT_FOUND' ){
-      throw err;
-    }
+    throw err;
     throw new ReferenceError("I can't find the view " + ref);
   }
 };
