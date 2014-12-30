@@ -1,0 +1,49 @@
+#!/usr/bin/env node
+
+var PassThrough = require('stream').PassThrough;
+
+function operation( routine ){
+  var io = new PassThrough(), input;
+  // operation receives input when something is piped to it
+  io.once('pipe', function( readable ){
+    // ensure no more pipes are received
+    this.once('pipe', function(){ throw Error("can't execute twice"); });
+    // break the pipe to avoid passing input data through
+    readable.unpipe( this );
+    // remember the input for later use
+    input = readable;
+  });
+  // operation is executed when piped to an output
+  io.pipe = function outputTo( output, opts ){
+    //pipe( output, opts );
+    if( !input ){
+      throw new Error("can't work without an input stream");
+    }
+    routine( input, output );
+  };
+  return io;
+};
+var spawn = require('child_process').spawn;
+var vim = operation(function( input, output ){
+  // hear every key stroke
+  input.setRawMode(true);
+  output.write('spawning vim...\n');
+  // spawn operation
+  var vim = spawn( '/usr/local/bin/vim', [], { stdio: 'pipe', cwd: process.cwd() });
+  // notify when action ends
+  vim.on('exit', function( code ){
+    output.write('vim exit with code ' + code + '\n');
+    // exit if output is process.stdout
+    output === process.stdout && process.exit();
+  });
+  // pipeline
+  input.pipe( vim.stdin );
+  vim.stdout.pipe( output );
+});
+// flow should be written as a pipeline of streams
+process.stdin
+  // first some input must be piped to the operation
+  .pipe( vim )
+  // operation is executed when it's piped to an output stream
+  .pipe( process.stdout )
+;
