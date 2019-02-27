@@ -8,6 +8,7 @@ function iai-test () {
   do
     if is_function "$reporter-$1"; then report=$1
     elif test "$1" == "bail"; then report="fails"; runner="code0"
+    elif test "$1" == "list"; then report="as-is"; runner="list"
     elif test -d "$1"; then fullpath="$(realpath $1)"
     elif test -f "$1"; then fullpath="$(realpath $1)"; action="alone"
     else fail "unexpected argument (%s)" "$1"; fi
@@ -52,7 +53,13 @@ function iai-test.run-code0 () {
   done
 }
 
+function iai-test.run-list () {
+  while IFS= read -d '' file; do printf '%s\n' "$file"; done
+}
+
 # REPORT FORMATTING
+
+function iai-test.report-as-is () { cat; }
 
 function iai-test.report-dots () {
   while read keyword value; do
