@@ -54,7 +54,7 @@ function iai-test.run-code0 () {
 }
 
 function iai-test.run-list () {
-  while IFS= read -d '' file; do printf '%s\n' "$file"; done
+  while IFS= read -d '' file; do printf '%s\n' "${file#$PWD/}"; done
 }
 
 # REPORT FORMATTING
