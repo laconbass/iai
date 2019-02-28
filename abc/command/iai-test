@@ -85,23 +85,22 @@ function iai-test.report-dot-code () {
   done
 }
 
-# TODO this is so ugly on screen
 function iai-test.report-fails () {
   local fails=0
   while read keyword value; do
     case $keyword in
-      TEST) printf "> %s ...\n" "${value#$PWD/}" ;;
+      TEST) printf "↓ %s ...\n" "${value#$PWD/}" ;;
       PASS|SKIP) : ;;
-      FAIL) printf "|> %s\n" "$value"; let fails++ ;;
+      FAIL) printf " → %s\n" "$value"; let fails++ ;;
       CODE)
         if (($value)) || (($fails)); then
           local expected="0"
           (($fails)) && expected="not 0"
-          printf "|> status code was %s while expecting %s\n" $value "$expected"
-          printf "|> CODE $value (%s fails)\n" "$fails"
+          printf " → status code was %s while expecting %s\n" $value "$expected"
+          printf "↑ CODE $value (%s fails)\n" "$fails"
           break # bail on first test that fails
         else
-          echo "OK"
+          echo "↑ OK"
         fi
     esac
   done
