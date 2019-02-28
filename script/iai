@@ -113,7 +113,7 @@ function iai () {
       utip "> try %s" "iai-help"
       return 1
     fi
-    type -t verb >/dev/null && verb "exec %s" "iai-${@}"
+    type -t verb >/dev/null && verb "exec %s" "iai-$*"
   fi
 
   shift;
