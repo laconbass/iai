@@ -44,12 +44,16 @@ function iai-test.alone () {
 function iai-test.run-every () {
   # ensure the test execution does not read our pipe redirecting /dev/null into
   # if it reads, the zero-terminated file list we are reading will loss data
-  while IFS= read -d '' file; do autotest report "$file" </dev/null; done
+  while IFS= read -d '' file; do
+    verb "generating report for %s" "$file"
+    autotest "$file" </dev/null
+  done
 }
 
 function iai-test.run-code0 () {
   while IFS= read -d '' file; do
-    autotest report "$file" || { info "bail on code $?"; break; }
+    verb "generating report for %s" "$file"
+    autotest "$file" </dev/null || { info "bail on code $?"; break; }
   done
 }
 
@@ -80,7 +84,9 @@ function iai-test.report-dot-code () {
       PASS) printf "·" ;;
       FAIL) printf "X" ;;
       SKIP) printf "-" ;;
-      CODE) printf "]\t"; (( $value )) && echo "CODE $value" || echo "OK" ;;
+      CODE) printf "]\t"
+        read -d ' ' code <<<"$value"
+        (( $code )) && echo "CODE $value" || echo "OK" ;;
     esac
   done
 }
@@ -89,16 +95,13 @@ function iai-test.report-fails () {
   local fails=0
   while read keyword value; do
     case $keyword in
-      TEST) printf "↓ %s ...\n" "${value#$PWD/}" ;;
+      TEST) printf "↓ %s ...\n" "${value//$PWD\//}"; fails=0 ;;
       PASS|SKIP) : ;;
-      FAIL) printf " → %s\n" "$value"; let fails++ ;;
+      FAIL) printf " → %s\n" "${value//$PWD\//}"; let fails++ ;;
       CODE)
-        if (($value)) || (($fails)); then
-          local expected="0"
-          (($fails)) && expected="not 0"
-          printf " → status code was %s while expecting %s\n" $value "$expected"
+        read -d ' ' code <<<"$value"
+        if (($fails)); then
           printf "↑ CODE $value (%s fails)\n" "$fails"
-          break # bail on first test that fails
         else
           echo "↑ OK"
         fi
