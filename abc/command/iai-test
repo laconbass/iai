@@ -46,14 +46,14 @@ function iai-test.run-every () {
   # if it reads, the zero-terminated file list we are reading will loss data
   while IFS= read -d '' file; do
     verb "generating report for %s" "$file"
-    autotest "$file" </dev/null
+    autotest report "$file" </dev/null
   done
 }
 
 function iai-test.run-code0 () {
   while IFS= read -d '' file; do
     verb "generating report for %s" "$file"
-    autotest "$file" </dev/null || { info "bail on code $?"; break; }
+    autotest report "$file" </dev/null || { info "bail on code $?"; break; }
   done
 }
 
@@ -95,15 +95,15 @@ function iai-test.report-fails () {
   local fails=0
   while read keyword value; do
     case $keyword in
-      TEST) printf "↓ %s ...\n" "${value//$PWD\//}"; fails=0 ;;
+      TEST) printf "↓ %s ..." "${value//$PWD\//}"; fails=0 ;;
       PASS|SKIP) : ;;
-      FAIL) printf " → %s\n" "${value//$PWD\//}"; let fails++ ;;
+      FAIL) printf "\n → %s" "${value//$PWD\//}"; let fails++ ;;
       CODE)
         read -d ' ' code <<<"$value"
         if (($fails)); then
-          printf "↑ CODE $value (%s fails)\n" "$fails"
+          printf "\n↑ CODE $value (%s fails)\n" "$fails"
         else
-          echo "↑ OK"
+          printf " ← OK\n"
         fi
     esac
   done
