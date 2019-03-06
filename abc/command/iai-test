@@ -24,6 +24,7 @@ function iai-test () {
   "iai-test.$action" "$fullpath" \
     | "iai-test.run-$runner" \
     | "$reporter-$report"
+  info "test completed, ${PIPESTATUS[0]} ${PIPESTATUS[1]} ${PIPESTATUS[2]}"
 }
 
 function iai-test.allin () {
@@ -40,10 +41,10 @@ function iai-test.alone () {
 }
 
 # TEST RUNNERS: generate a report for each file in zero-terminated list (stdin)
+# NOTE: ensure the test execution does not read our pipe redirecting /dev/null into
+# NOTE: if it reads, the zero-terminated file list we are reading will loss data
 
 function iai-test.run-every () {
-  # ensure the test execution does not read our pipe redirecting /dev/null into
-  # if it reads, the zero-terminated file list we are reading will loss data
   while IFS= read -d '' file; do
     verb "generating report for %s" "$file"
     autotest report "$file" </dev/null
@@ -53,7 +54,9 @@ function iai-test.run-every () {
 function iai-test.run-code0 () {
   while IFS= read -d '' file; do
     verb "generating report for %s" "$file"
-    autotest report "$file" </dev/null || { info "bail on code $?"; break; }
+    autotest report "$file" </dev/null || {
+      local code=$?; emsg "bail on code $code"; return $code;
+    }
   done
 }
 
@@ -79,14 +82,17 @@ function iai-test.report-dots () {
 
 function iai-test.report-dot-code () {
   while read keyword value; do
+    while read -d ':' DIR; do value="${value//$DIR\//}"; done <<<"$PATH"
     case $keyword in
-      TEST) printf "%s\t[" "${value#$PWD/}" ;;
+      TEST) printf "%s [" "${value#$PWD/}" ;;
       PASS) printf "·" ;;
       FAIL) printf "X" ;;
       SKIP) printf "-" ;;
-      CODE) printf "]\t"
+      CODE) printf "] "
         read -d ' ' code <<<"$value"
-        (( $code )) && echo "CODE $value" || echo "OK" ;;
+        echo "$(autotest code "$code" 2>/dev/null)"
+        ;;
+      *) fail "Unexpected %s" "$keyword $value" ;;
     esac
   done
 }
@@ -94,6 +100,7 @@ function iai-test.report-dot-code () {
 function iai-test.report-fails () {
   local fails=0
   while read keyword value; do
+    while read -d ':' DIR; do value="${value//$DIR\//}"; done <<<"$PATH"
     case $keyword in
       TEST) printf "↓ %s ..." "${value//$PWD\//}"; fails=0; SECONDS=0 ;;
       PASS|SKIP) : ;;
@@ -105,6 +112,8 @@ function iai-test.report-fails () {
         else
           printf " ← OK in ${SECONDS}s\n"
         fi
+        ;;
+      *) fail "Unexpected %s" "$keyword $value" ;;
     esac
   done
 }
