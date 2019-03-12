@@ -119,6 +119,7 @@ function iai () {
   shift;
   # Quoting is neccessary, otherwise quoted args are splitted
   $cmd "$@" # DON'T EXIT, let command decide when to exit (or return)
+  # TODO colorize stderr when writing to a tty. see https://serverfault.com/q/59262/195906
 }
 
 ##
