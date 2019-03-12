@@ -110,7 +110,7 @@ function iai-test.report-fails () {
         if (($fails)); then
           printf "\n↑ CODE $value (%s fails) in ${SECONDS}s\n" "$fails"
         else
-          printf " ← OK in ${SECONDS}s\n"
+          printf " ← $(autotest code $code) in ${SECONDS}s\n"
         fi
         ;;
       *) fail "Unexpected %s" "$keyword $value" ;;
