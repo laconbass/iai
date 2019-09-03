@@ -55,6 +55,14 @@ iai-pkg.apt.cleanup () { $sudo apt autoremove; }
 iai-pkg.opkg.update () { opkg update; }
 # opkg search is a "which pkg provides file" command
 iai-pkg.opkg.search () { opkg find "*$@*"; }
+iai-pkg.opkg.upgrade () {
+  opkg update
+  local packages="$(opkg list-upgradable)"
+  if test -z "$packages"; then
+    info "there are no packages to upgrade"; return 0
+  fi
+  opkg upgrade $(cut -d ' ' -f 1 <<<"$packages")
+}
 iai-pkg.opkg.install () { opkg install "$@"; }
 
 
