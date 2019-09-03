@@ -1,20 +1,22 @@
 assert_function iai || exit
 
 function iai-net () {
-	if test -z "$1"
+  if test -z "$1"
   then
-		echo "iface: $(iai-net-iface)"
-		echo "  mac: $(iai-net-mac)"
-		echo "lanip: $(iai-net-lanip)"
-		echo " gate: $(iai-net-gate)"
-		echo "wanip: $(iai-net-wanip -q || echo NO CONNECTION)"
-		return
-	fi
+    echo "Displaying information about how this device connects to the cloud:"
+    printf "cloudy: "; iai-net-cloudy && echo YES || echo NO
+    printf " wanip: "; iai-net-wanip
+    printf "  gate: "; iai-net-gate
+    printf " lanip: "; iai-net-lanip
+    printf " iface: "; iai-net-iface
+    printf "   mac: "; iai-net-mac
+    return
+  fi
 
-	local cmd="$FUNCNAME-$1"
-	assert_function "$cmd"
-	shift
-	$cmd "$@"
+  local cmd="$FUNCNAME-$1"
+  assert_function "$cmd"
+  shift
+  $cmd "$@"
 }
 
 function iai-net-ping () {
@@ -28,22 +30,24 @@ function iai-net-ping () {
   info "Connectivity ok"
 }
 
+# checks wherever it's a route available to the cloud. Outputs nothing
+function iai-net-cloudy () { ip route get 8.8.8.8 &>/dev/null; }
+
 function iai-net-wanip () {
   # provides a way to research the system IP within the cloud.
   # It depends on `dig`. See http://unix.stackexchange.com/a/81699
   ##
+  iai-net-cloudy || { emsg "There isn't a route to the cloud"; return 1; }
   dig +short myip.opendns.com @resolver1.opendns.com 2>/dev/null || {
-		test "$1" = "-q" && return 1 # silent mode
-    iai.dependencies
-    emsg "dig command failed"
     if ! type dig &>/dev/null; then
-      utip "dig seems not available."
+      emsg "'dig' command seems not available."
       utip "Try '%s' (debian/etc)" "iai pkg install dnstools"
       utip "or '%s' (arch/etc)" "iai pkg install bind-tools"
       utip "or '%s' (openwrt)" "iai pkg install bind-dig"
       utip "or '%s' (termux)" "iai pkg install dnsutils"
     else
-      utip "unknown error"
+      emsg "dig command failed (unknown error)"
+      test "$1" = "-q" && return 1 # silent mode
       dig +short myip.opendns.com @resolver1.opendns.com
     fi
     return 1
@@ -54,37 +58,53 @@ function iai-net-lanip () {
   # provides a way to research the system IP within the LAN.
   # See https://askubuntu.com/a/604691/167333
   ##
-  ip route get 8.8.8.8 | awk '{print $7; exit}' || {
-    iai.dependencies
-    emsg "ip command failed"
+  if ip route get 8.8.8.8 &>/dev/null
+  then
+    ip route get 8.8.8.8 | awk '{print $7; exit}'
+  else
     if ! type ip &>/dev/null; then
-      utip "'ip' command is not available."
+      emsg "'ip' command is not available."
       utip "Try %s (openwrt based)" "iai pkg install ip"
     else
-      utip "unknown error"
-      ip route get 8.8.8.8
+      local err="$(ip route get 8.8.8.8 2>&1 1>/dev/null)"
+      case "$err" in
+        *'Network unreachable'*)
+          emsg "Cloud Network is unreachable from this device"
+	  ;;
+        *)
+          emsg "ip command failed with following output on stderr:"
+          emsg <<<"$err"
+      esac
     fi
-    return 1
-  }
-}
-
-function iai-net-gate () {
-  # see https://serverfault.com/a/731095/195906
-  ip route show default 0.0.0.0/0 | awk '{print $3}'
-}
-
-function iai-net-iface () {
-  ip route show default 0.0.0.0/0 | awk ' {print $5}'
-  if test ${PIPESTATUS[-2]} -gt 0
-  then
-    emsg "there is no default interface available!"
-    utip "try> %s" "sudo ifconfig -a -s | tail -n +2"
     return 1
   fi
 }
 
+function iai-net-gate () {
+  # see https://serverfault.com/a/731095/195906
+  local route="$(ip route show default 0.0.0.0/0)"
+  case "$route" in
+    '') emsg "there is no default route to 0.0.0.0/0"; return 1;;
+    *)  awk '{print $3}' <<<"$route";;
+  esac
+}
+
+function iai-net-iface () {
+  local route="$(ip route show default 0.0.0.0/0)"
+  case "$route" in
+    '') emsg "there is no default route to 0.0.0.0/0"; return 1;;
+    *)  awk '{print $5}' <<<"$route";;
+  esac
+}
+
 function iai-net-mac () {
-	cat /sys/class/net/$(iai-net-iface)/address
+  if iai-net-iface &>/dev/null
+  then
+    cat /sys/class/net/$(iai-net-iface)/address
+  else
+    emsg "Can't determine which interface connects this device to the cloud"
+    return 1
+  fi
 }
 
 ##
