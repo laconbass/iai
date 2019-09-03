@@ -158,21 +158,21 @@ function iai-moods () {
 
 ##
 # `iai root` outputs the directory where iai resides (the "iai root").
-# It's probably the most basic operation besides the "artistic" bare `iai`,
-# and the `iai help` commands.
+# Optionally, researches directory where given entity ($1) resides.
+# It's probably the most basic operation besides the `help` command
 # LINK
 # - http://stackoverflow.com/a/246128/1894803
 # : research absolute paths to this script file and its directory
 ##
 iai-root () {
-  local SOURCE="${BASH_SOURCE[0]}" DIR=""
+  local SOURCE="${1:-${BASH_SOURCE[0]}}" DIR=""
   while [ -h "$SOURCE" ]; do
     DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
     SOURCE="$(readlink "$SOURCE")"
     [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
   done
   DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-  dirname $DIR
+  test "$#" -eq 0 && dirname "$DIR" || echo "$DIR"
 }
 
 ##
