@@ -27,7 +27,7 @@ RC_FILE=~/.bashrc
 
 # overrides for 'termux' envs
 if type termux-info &>/dev/null; then
-  IAI_PATH="${IAI_PATH%standard}termux"
+  BIN_PATH="$PREFIX/bin"
 fi
 
 # overrides for 'openwrt' envs
