@@ -49,7 +49,8 @@ log () {
 
 # decides whenever to output a log message or ignore it.
 # default implementation is to output everything except verbose messages
-log.filter () { test "$1" != 'VV'; }
+# unless BASHIDO_VERBOSE is set to greater than 0 on environment
+log.filter () { (($BASHIDO_VERBOSE)) || test "$1" != 'VV'; }
 
 # logs messages with an error level mark (EE)
 emsg () { if (($#)); then log EE "$@"; else <&0 loog EE; fi; }
