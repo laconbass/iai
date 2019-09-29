@@ -29,14 +29,16 @@ function bashido () {
 
 function bashido.root () {
 	# researches bashido's root directory and prints it out
+	# optionaly researches root for given source file
 	##
-	SOURCE="${BASH_SOURCE[0]}"
-	while [ -h "$SOURCE" ]; do
-		DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-		SOURCE="$(readlink "$SOURCE")"
-		[[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
-	done
-	dirname "$(cd -P "$( dirname "$SOURCE" )" && pwd)"
+  local SOURCE="${1:-${BASH_SOURCE[0]}}" DIR=""
+  while [ -h "$SOURCE" ]; do
+    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+  done
+  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+  test "$#" -eq 0 && dirname "$DIR" || echo "$DIR"
 }
 
 ##
