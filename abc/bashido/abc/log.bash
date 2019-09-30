@@ -65,7 +65,7 @@ verb () { if (($#)); then log VV "$@"; else <&0 loog VV; fi; }
 
 # helper to [fail fast](http://www.martinfowler.com/ieeeSoftware/failFast.pdf)
 # Aditionally adds a call trace.
-fail () { emsg "$@"; emsg <<<"$(call_trace 1)"; exit 1; }
+fail () { emsg "$@"; call_trace 1 | emsg; exit 1; }
 
 ####
 # fail: same as `emsg`, but also writes a call trace and exits with code=1
@@ -81,7 +81,10 @@ fail () { emsg "$@"; emsg <<<"$(call_trace 1)"; exit 1; }
 
 # require dependencies at the end, to ensure log is defined already
 bashido.require "stdio.ansi" || exit
-bashido.require "call_trace" || exit
+# conditionally source call_trace, depending on following env variable
+(($BASHIDO_TRACE)) \
+	&& { bashido.require "call_trace" || exit; } \
+	|| call_trace () { :; }
 
 
 ##
