@@ -20,7 +20,7 @@ function bashido () {
 	elif test "$(type -t "bashido.$1")" == "function"
 	then # 3rd form: call command with given argv
 		local command="bashido.$1"; shift;
-		info "exec by process $$ %s" "$command $@"
+		verb "exec by process $$ %s" "$command $@"
 		$command "$@"
 	else # 4th form: backwards compat avoiding delegation on non-existant functions
 		bashido.translate "${1//-//}" # translate dashes to slashes (backwards compat)
