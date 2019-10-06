@@ -45,21 +45,26 @@ then
 	BASHIDO_ANSI_FG_ORANGE="$(tput setaf 3)"
 	BASHIDO_ANSI_BG_PURPLE="$(tput setab 5)"
 	BASHIDO_ANSI_FG_PURPLE="$(tput setaf 5)"
+  BASHIDO_ANSI_NONE="$(tput op)"
 
 	BASHIDO_ANSI_REV="$(tput smso)"
   BASHIDO_ANSI_UND="$(tput smul)"
 	#BASHIDO_ANSI_DIM="$(tput dim)"
-	#BASHIDO_ANSI_BOLD="$(tput bold)"
+  BASHIDO_ANSI_ITA="$(tput sitm)"
+	#BASHIDO_ANSI_BOLD="$(tput op)"
   # avoid usage of non-color values to ease piping colored outputs
   # this implies avoid usage of 'sgr0' capname
-  BASHIDO_ANSI_RESET="$(tput op)$(tput rmso)$(tput rmul)"
+  BASHIDO_ANSI_RESET="$(tput op)$(tput rmso)$(tput rmul)$(tput ritm)"
 
 
-  BASHIDO_ANSI_LOG_BEGIN="$(ansi und)"
+  BASHIDO_ANSI_LOG_BEGIN="$(ansi ita)"
+  case "$TERM" in *rxvt*)
+    BASHIDO_ANSI_LOG_BEGIN="$(ansi und)"
+  esac
   BASHIDO_ANSI_LOG_TRAIL="$(ansi reset)"
-	BASHIDO_ANSI_LOG_VALUE="$(tput rev)"
+  BASHIDO_ANSI_LOG_VALUE="$(ansi none)"
 	BASHIDO_ANSI_LOG_VV="$(ansi fg.purple)"
-	BASHIDO_ANSI_LOG_UX="$(ansi fg.green)"
+	BASHIDO_ANSI_LOG_UX="$(ansi fg.cyan)"
 	BASHIDO_ANSI_LOG_II="$(ansi fg.blue)"
 	BASHIDO_ANSI_LOG_WW="$(ansi fg.orange)"
 	BASHIDO_ANSI_LOG_EE="$(ansi fg.red)"
