@@ -9,8 +9,10 @@ function iai-test () {
     if is_function "$reporter-$1"; then report=$1
     elif test "$1" == "bail"; then report="fails"; runner="code0"
     elif test "$1" == "list"; then report="as-is"; runner="list"
-    elif test -d "$1"; then fullpath="$(realpath $1)"
-    elif test -f "$1"; then fullpath="$(realpath $1)"; action="alone"
+    elif test -d "$1"; then
+      fullpath="$(realpath $1)"; action="allin" runner="every" report="dot-code"
+    elif test -f "$1"; then
+      fullpath="$(realpath $1)"; action="alone" runner="code0" report="fails"
     else fail "unexpected argument (%s)" "$1"; fi
     shift # remove the parsed argument
   done
