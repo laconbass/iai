@@ -369,7 +369,7 @@ function iai-confirm () {
   do
     info "%s wants to %s" $fn "$msg"
     utip "> type %s to $msg" "yes"
-    info "> type %s to see the function on the pager (line $line)" "view"
+    verb "> type %s to see the function on the pager (line $line)" "view"
     info "> type any other thing to cancel gracefully"
     read CONFIRM || { emsg "can't read response"; return 1; }
     case "$CONFIRM" in
