@@ -30,6 +30,11 @@ function iai-net-ping () {
   info "Connectivity ok"
 }
 
+function iai-net-wait () {
+	secs="${2:-3}"
+	until iai net ping "$1"; do sleep "$secs"; info "wating ${secs}s more"; done
+}
+
 # checks wherever it's a route available to the cloud. Outputs nothing
 function iai-net-cloudy () { ip route get 8.8.8.8 &>/dev/null; }
 
