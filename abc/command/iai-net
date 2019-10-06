@@ -30,7 +30,11 @@ function iai-net-ping () {
   info "Connectivity ok"
 }
 
-<<<<<<< HEAD
+function iai-net-wait () {
+	secs="${2:-3}"
+	until iai net ping "$1"; do sleep "$secs"; info "wating ${secs}s more"; done
+}
+
 function iai-net-cloudy () {
   # checks wherever it's a route available to the cloud. Outputs nothing
 	ip route get 8.8.8.8 &>/dev/null || {
@@ -39,15 +43,6 @@ function iai-net-cloudy () {
     utip "Try %s (openwrt based)" "iai pkg install ip"
 	}
 }
-=======
-function iai-net-wait () {
-	secs="${2:-3}"
-	until iai net ping "$1"; do sleep "$secs"; info "wating ${secs}s more"; done
-}
-
-# checks wherever it's a route available to the cloud. Outputs nothing
-function iai-net-cloudy () { ip route get 8.8.8.8 &>/dev/null; }
->>>>>>> 00df9595ee7e7aca901aa7f0d6d878fdd22d864f
 
 function iai-net-wanip () {
   # provides a way to research the system IP within the cloud.
