@@ -30,14 +30,23 @@ function iai-net-ping () {
   info "Connectivity ok"
 }
 
-# checks wherever it's a route available to the cloud. Outputs nothing
-function iai-net-cloudy () { ip route get 8.8.8.8 &>/dev/null; }
+function iai-net-cloudy () {
+  # checks wherever it's a route available to the cloud. Outputs nothing
+	ip route get 8.8.8.8 &>/dev/null || {
+		type ip &>/dev/null && return 1
+    emsg "'ip' command is not available."
+    utip "Try %s (openwrt based)" "iai pkg install ip"
+	}
+}
 
 function iai-net-wanip () {
   # provides a way to research the system IP within the cloud.
   # It depends on `dig`. See http://unix.stackexchange.com/a/81699
   ##
-  iai-net-cloudy || { emsg "There isn't a route to the cloud"; return 1; }
+  iai-net-cloudy || {
+		emsg "There isn't a route to the cloud"
+		return 1
+	}
   dig +short myip.opendns.com @resolver1.opendns.com 2>/dev/null || {
     if ! type dig &>/dev/null; then
       emsg "'dig' command seems not available."
@@ -55,52 +64,32 @@ function iai-net-wanip () {
 }
 
 function iai-net-lanip () {
-  # provides a way to research the system IP within the LAN.
-  # See https://askubuntu.com/a/604691/167333
-  ##
-  if ip route get 8.8.8.8 &>/dev/null
-  then
-    ip route get 8.8.8.8 | awk '{print $7; exit}'
-  else
-    if ! type ip &>/dev/null; then
-      emsg "'ip' command is not available."
-      utip "Try %s (openwrt based)" "iai pkg install ip"
-    else
-      local err="$(ip route get 8.8.8.8 2>&1 1>/dev/null)"
-      case "$err" in
-        *'Network unreachable'*)
-          emsg "Cloud Network is unreachable from this device"
-	  ;;
-        *)
-          emsg "ip command failed with following output on stderr:"
-          emsg <<<"$err"
-      esac
-    fi
+  # researches the system IP within the LAN.
+	# TODO system may have LAN connection when not connected to the cloud
+	iai-net-cloudy || {
+    emsg "Cloud is unreachable from this device"
     return 1
-  fi
+	}
+  ip route get 8.8.8.8 | awk '{print $7;exit}'
 }
 
 function iai-net-gate () {
+  # researches the gate IP which connects this device to the cloud
   # see https://serverfault.com/a/731095/195906
-  local route="$(ip route show default 0.0.0.0/0)"
-  case "$route" in
-    '') emsg "there is no default route to 0.0.0.0/0"; return 1;;
-    *)  awk '{print $3}' <<<"$route";;
-  esac
+	iai-net-cloudy || fail "device isn't connected to the cloud"
+	ip route get 8.8.8.8 | awk '{print $3;exit}'
 }
 
 function iai-net-iface () {
-  local route="$(ip route show default 0.0.0.0/0)"
-  case "$route" in
-    '') emsg "there is no default route to 0.0.0.0/0"; return 1;;
-    *)  awk '{print $5}' <<<"$route";;
-  esac
+	# researches which network interface connects this device to the cloud
+	iai-net-cloudy || fail "device isn't connected to the cloud"
+	ip route get 8.8.8.8 | awk '{print $5;exit}'
 }
 
 function iai-net-mac () {
-  if iai-net-iface &>/dev/null
+	if iface="$(iai-net-iface 2>/dev/null)"
   then
-    cat /sys/class/net/$(iai-net-iface)/address
+    cat "/sys/class/net/$iface/address"
   else
     emsg "Can't determine which interface connects this device to the cloud"
     return 1
