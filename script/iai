@@ -141,7 +141,7 @@ function iai () {
 function iai-dependencies () { iai.dependencies; }
 function iai-artii () {
   local artii="$(iai-path dojo db artii)"
-  cat "$(find "$artii" -type f -print0 | shuf -n 1 -z)"
+  cat "$(find "$artii" -type f | shuf -n 1)"
 }
 function iai-moods () {
   local emotions="$(iai-path dojo db artii emotions)"
