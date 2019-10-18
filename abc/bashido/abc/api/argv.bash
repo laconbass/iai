@@ -14,13 +14,13 @@ function argv () {
   case "$1" in
     subcommand)
       # Unless some COMMAND argument was provided, it is useless doing more
-      if test -z "$2"; then emsg "missing $1"; $funcname help; return 2; fi
+      test -z "$2" && { emsg "missing $1"; $funcname help >&2; return 2; }
       # executable is guessed to be an already defined bash function named as:
       executable="$funcname.$2"
     ;;
     command)
       # Unless some COMMAND argument was provided, it is useless doing more
-      if test -z "$2"; then emsg "missing $1"; $funcname help; return 2; fi
+      test -z "$2" && { emsg "missing $1"; $funcname help >&2; return 2; }
       # executable is guessed to be a function or any executable file named as:
       executable="$funcname-$2"
       if test "$(type -t "$executable")" = "file" \
