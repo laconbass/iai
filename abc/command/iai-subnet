@@ -1,0 +1,72 @@
+assert_function iai || exit
+
+function iai-subnet () {
+  if test -z "$1"
+  then
+    echo "cow-boy testing"
+		select iface in $(
+			route | tail +3 | awk '{print $8}'
+		); do
+			iai-subnet-scan $iface
+		done
+    return
+  fi
+
+  local cmd="$FUNCNAME-$1"
+  assert_function "$cmd"
+  shift
+  $cmd "$@"
+}
+
+function iai-subnet-ping () {
+  range=${range:-$3}
+	printf "@$range ping $1 to $2: "
+	for ((c=$1; c <= $2; c++))
+	do
+		actual=$range.$c
+		if ping -q -c 1 -w 1 "$actual" &> >(verb)
+		then
+			printf "√$c√"
+			known+=($actual)
+		else
+			printf "•"
+		fi
+	done
+	printf '\n'
+}
+
+function iai-subnet-scan () {
+  iface=$1
+	utip "picked %s interface" "$iface"
+	myip=$(
+		ifconfig $iface | grep 'inet ' | awk '{print $2;exit}'
+		)
+	utip "iface ip %s" "$myip"
+	range=${myip%\.*}
+	utip "range is %s" "$range"
+	iai subnet ping 1 254
+}
+
+function iai-subnet-lanip () {
+  # researches the system IP within the LAN.
+	# TODO system may have LAN connection when not connected to the cloud
+	iai-net-cloudy || {
+    emsg "Cloud is unreachable from this device"
+    return 1
+	}
+  ip route get 8.8.8.8 | awk '{print $7;exit}'
+}
+
+function iai-subnet-mac () {
+	if iface="$(iai-net-iface 2>/dev/null)"
+  then
+    cat "/sys/class/net/$iface/address"
+  else
+    emsg "Can't determine which interface connects this device to the cloud"
+    return 1
+  fi
+}
+
+##
+# vim modeline
+# /* vim: set filetype=sh ts=2 shiftwidth=2: */
