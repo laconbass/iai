@@ -8,17 +8,15 @@
  *
  */
 
-module.exports = dynamed;
+const re = /^[A-z]+$/
 
-const re = /^[a-Z]+$/
-
-function dynamed( name, action ){
-  if !( re.test(name) ){
+module.exports = function (name, action) {
+  if (! re.test(name)) {
     throw new Error('Found possible code injection')
   }
   return new Function('fn', 'return '
     +'function '+name+'( ){\n'
-    +'  return fn.apply( this, arguments );\n'
-    +'};'
-  )( action );
+    +'  return fn.apply( this, arguments )\n'
+    +'}'
+  )(action);
 }

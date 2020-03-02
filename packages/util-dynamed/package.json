@@ -1,0 +1,17 @@
+{
+  "name": "@iaigz/util-dynamed",
+  "version": "1.0.0",
+  "description": "Simple utility to dynamically create a named function",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "iai",
+    "util",
+    "dynamic",
+    "function"
+  ],
+  "author": "Lorenzo García Rivera",
+  "license": "CC-BY-SA-4.0"
+}
