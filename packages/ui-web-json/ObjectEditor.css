@@ -1,0 +1,13 @@
+.ObjectEditor {
+  margin: .2em; /* resets usual browser style */
+}
+.ObjectEditor > .ObjectViewer {
+  margin: 0;
+}
+.ObjectEditor *[contenteditable=true] {
+  background: #6c6c6c;
+}
+
+.ObjectEditor button.theme { background: red; }
+.ObjectEditor button.theme.selected { background: green; }
+

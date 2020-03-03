@@ -1,0 +1,53 @@
+.FileExplorer figcaption::before {
+  content: '..';
+  background: white;
+  padding: 0 .5em;
+}
+.FileExplorer nav {
+  display: flex;
+  flex-flow: row wrap;
+}
+.FileExplorer nav li {
+  flex-grow: 1;
+  flex-shrink: 1;
+  background-color: green;
+  margin: .2em;
+  padding: .3em;
+  list-style: none;
+  text-align: center;
+}
+.FileExplorer nav li::before {
+  content: '';
+  display: block;
+  background-image: url('icons/48x48/legacy/image-missing.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 48px;
+  min-width: 48px;
+  background-size: contain;
+}
+.FileExplorer nav li.Directory {
+  cursor: pointer;
+}
+.FileExplorer nav li.Directory::after {
+  content: "/";
+}
+.FileExplorer nav li.Directory::before {
+  background-image: url('icons/48x48/places/folder.png');
+}
+.FileExplorer nav li.File::before {
+  background-image: url('icons/48x48/mimetypes/text-x-preview.png');
+}
+.FileExplorer nav li.SymbolicLink::before {
+  background-image: url('icons/48x48/emblems/emblem-symbolic-link.png');
+}
+.FileExplorer nav li.CharacterDevice::before {
+  background-image: url('icons/48x48/legacy/input-keyboard.png');
+}
+.FileExplorer nav li.BlockDevice::before {
+  background-image: url('icons/48x48/mimetypes/text-x-preview.png');
+}
+.FileExplorer nav li.Socket::before {
+  background-image: url('icons/48x48/legacy/network-transmit-receive.png');
+}
+

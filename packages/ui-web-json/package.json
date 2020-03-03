@@ -1,0 +1,16 @@
+{
+  "name": "iai-ui-json",
+  "version": "1.0.0",
+  "description": "user interface components to ease working with json objects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "iai",
+    "ui",
+    "json"
+  ],
+  "author": "Lorenzo García Rivera",
+  "license": "CC-BY-SA-4.0"
+}
