@@ -1,0 +1,28 @@
+{
+  "name": "@iaigz/service-ws",
+  "version": "0.0.0",
+  "description": "A ready-to-use http service with websocket integration",
+  "main": "ServiceServer.js",
+  "browser": "ServiceClient.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/basic.js && standard --fix"
+  },
+  "author": "Lorenzo García Rivera",
+  "license": "SEE LICENSE IN README.md",
+  "dependencies": {
+    "iai-abc": "file:///home/lorenzo/repos/iai/packages/iai-abc",
+    "iai-oop": "file:///home/lorenzo/repos/iai/packages/iai-oop",
+    "ws": "^7.2.1"
+  },
+  "devDependencies": {
+    "tap-spec": "^4.1.1",
+    "tape": "^4.5.1"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.1",
+    "utf-8-validate": "^5.0.2"
+  }
+}
