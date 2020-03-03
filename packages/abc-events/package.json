@@ -1,0 +1,17 @@
+{
+  "name": "@iaigz/abc-events",
+  "version": "1.0.0",
+  "description": "Proxyed version of native EventEmitter, an example of revised practical inheritance",
+  "main": "EventEmitter.js",
+  "files": [ "EventEmitter.js" ],
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "iai",
+    "events",
+    "EventEmitter"
+  ],
+  "author": "Lorenzo García Rivera",
+  "license": "CC-BY-SA-4.0"
+}
