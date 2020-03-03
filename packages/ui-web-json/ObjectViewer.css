@@ -1,0 +1,160 @@
+/* -------------------------------- */
+.ObjectViewer {
+  margin: .2em; /* resets usual browser style */
+  display: flex;
+  flex-flow: row wrap;
+}
+.ObjectViewer .ObjectViewer { margin: 0; }
+.ObjectViewer > * { flex-basis: 100%; }
+.ObjectViewer > figcaption {
+  padding: .25em;
+  cursor: pointer;
+}
+.ObjectViewer > figcaption:hover,
+.ObjectViewer > figcaption:focus {
+  outline: .15em solid
+}
+.ObjectViewer.collapsed > figcaption:hover::before,
+.ObjectViewer > figcaption::before {
+  display: inline-block;
+  vertical-align: middle;
+  content: ''; width: 0;
+  border-style: solid;
+  border-width: .5em .3em;
+  border-color: currentColor transparent;
+  border-bottom: transparent;
+  transition: .3s border-color;
+  margin-top: 0;
+}
+.ObjectViewer > figcaption:hover::before {
+  border-bottom: .5em solid;
+  border-top: transparent;
+}
+.ObjectViewer.collapsed > figcaption::before {
+  border-bottom: solid;
+  border-width: .3em .5em;
+  border-color: transparent currentColor;
+  border-right: transparent;
+  margin-top: -.1em;
+}
+.ObjectViewer.collapsed > dl { display: none; }
+.ObjectViewer .ObjectViewer > figcaption {
+  display: none;
+}
+.ObjectViewer > dl {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: stretch;
+  margin: 0; /* resets usual browser style */
+  margin-top: .15em;
+  padding: .1em;
+  min-height: 1em;
+}
+.ObjectViewer > dl.void::before { content: '(void)'; }
+.ObjectViewer dl dt { flex: 0 1 auto; }
+.ObjectViewer dl dd {
+  flex: 1;
+  /*break-after: always; /* only works on firefox */
+  margin-left: .5em; /* also resets usual browser style */
+}
+.ObjectViewer dl dd.object {
+  margin-left: 0; margin-top: .35em;
+}
+.ObjectViewer dl > * {
+  padding: .1em .3em;
+  display: flex; /* to be able to center text vertically */
+  align-items: center; /* to actually center the text */
+}
+.ObjectViewer dl > .object { flex-basis: 100%; }
+.ObjectViewer dl > .object { display: block; } /* no text center need */
+.ObjectViewer dl > hr {
+  /* this HR allows stepping forward chrome's missing break-after */
+  padding: 0;
+  margin: .1em;
+  visibility: hidden;
+  flex-basis: 100%;
+}
+.ObjectViewer .ObjectViewer hr:last-child,
+.ObjectViewer dd.object + hr { margin: 0; }
+.ObjectViewer dl .ObjectViewer dl { margin-left: 1em; }
+/* -------------------------------- */
+.ObjectViewer dl > *:hover { cursor: pointer; }
+.ObjectViewer dl > dt:hover + dd {
+  font-weight: bolder; text-decoration: underline; } 
+.ObjectViewer dl > dt.object:hover + dd {
+  font-weight: normal; text-decoration: none; } 
+.ObjectViewer dl > dt.object:focus + dd, 
+.ObjectViewer dl > *:focus,
+.ObjectViewer dl > dt.object:hover + dd, 
+.ObjectViewer dl > *:hover { outline: .15em solid; }
+.ObjectViewer dl > dd.object:hover {
+  outline: none;
+  cursor: default;
+}
+/* -------------------------------- */
+
+/* MONOSPACED */
+.ObjectViewer { font-family: monospace; }
+
+/* -- THEME: DARKi3 -- */
+.ObjectViewer.darki3 { background: #222d31; }
+.ObjectViewer.darki3 .ObjectViewer { background: transparent; }
+.ObjectViewer.darki3 > dl {
+  margin-left: .4em;
+  border-left: .15em dotted #f7d7a9;
+}
+/*.ObjectViewer.darki3 dl > dt:focus,
+.ObjectViewer.darki3 dl > dt:hover { z-index: 2; background: #222d31; }
+.ObjectViewer.darki3 dl > dt.object:focus, 
+.ObjectViewer.darki3 dl > dt.object:hover { z-index: auto; }/**/
+.ObjectViewer.darki3 dl > dt:focus + dd,
+.ObjectViewer.darki3 dl > dt:hover + dd {
+  background: #6c6c6c;
+  outline: .15em;
+}
+/*.ObjectViewer.darki3 dl > dd { margin-left: 0; }*/
+.ObjectViewer.darki3 dl dt { color: #f7bd66; }
+.ObjectViewer.darki3 figcaption,
+.ObjectViewer.darki3.array dl > dt,
+.ObjectViewer.darki3 dl dd.function { color: #f7d7a9; }
+.ObjectViewer.darki3 dl dd.null,
+.ObjectViewer.darki3 dl dd.boolean,
+.ObjectViewer.darki3 dl dd.number { color: #1bbb9b; }
+.ObjectViewer.darki3 dl dd.string { color: #ba8baf; }
+.ObjectViewer.darki3 dl dd.object { color: #f7bd66; }
+.ObjectViewer.darki3::after,
+.ObjectViewer.darki3 figcaption::before,
+.ObjectViewer.darki3 figcaption::after,
+.ObjectViewer.darki3 dl > *::before,
+.ObjectViewer.darki3 dl > *::after { color: #d8d8d3; }
+/**/
+/* ---------THEME: SOURCY ------------------ */
+.ObjectViewer.sourcy { font-family: monospace; }
+.ObjectViewer.sourcy figcaption::after { content: '{'; }
+.ObjectViewer.sourcy::after { content: '}'; }
+.ObjectViewer.sourcy.array figcaption::after { content: '['; }
+.ObjectViewer.sourcy.array::after { content: ']'; }
+.ObjectViewer.collapsed.sourcy::after,
+.ObjectViewer.sourcy.array .ObjectViewer::after,
+.ObjectViewer.sourcy .ObjectViewer figcaption::after{
+  display: none;
+}
+.ObjectViewer.collapsed.sourcy figcaption::after { content: '{...}'; }
+.ObjectViewer.collapsed.sourcy.array figcaption::after { content: '[...]'; }
+.ObjectViewer.sourcy > dl { margin-left: .3em; }
+.ObjectViewer.sourcy.array dl > dt.object::after { margin-left: .4em; }
+.ObjectViewer.sourcy.object dl > dt::before { content: '"'; }
+.ObjectViewer.sourcy.object dl > dt::after { content: '":'; }
+.ObjectViewer.sourcy.object dl > dt.object::after { content: '": {'; }
+.ObjectViewer.sourcy.object dl > dt.object.array::after { content: '": ['; }
+.ObjectViewer.sourcy dl > dt.object::after { content: '{'; }
+.ObjectViewer.sourcy dl dd::after { content: ','; }
+.ObjectViewer.sourcy dl dd:last-of-type::after { content: ''; }
+.ObjectViewer.sourcy dl dd.string::before { content: '"'; }
+.ObjectViewer.sourcy dl dd.string::after { content: '",'; }
+.ObjectViewer.sourcy dl dd.string:last-of-type::after { content: '"'; }
+.ObjectViewer.sourcy dl dd.object::after { content: '},'; }
+.ObjectViewer.sourcy dl dd.object:last-of-type::after { content: '}'; }
+.ObjectViewer.sourcy dl dd.object.array::after { content: '],'; }
+.ObjectViewer.sourcy dl dd.object.array:last-of-type::after { content: ']'; }
+/**/
