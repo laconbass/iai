@@ -1,9 +1,10 @@
-const assert = require('assert')
 const os = require('os')
 const http = require('http')
-const { WebSocketServer } = require('ws')
+const assert = require('assert')
+const WebSocket = require('ws')
 
 const abc = require('iai-abc')
+const oop = abc.oop
 const log = abc.log
 
 log.level = log.INFO
@@ -19,6 +20,12 @@ function ServiceServer () {
 
   Parent.call(this)
 
+  oop(this)
+  // TODO https
+    .internal('_server', http.createServer())
+    .internal('_wss', new WebSocket.Server({ server: this._server }))
+    .accessor('listening', () => this._server.listening)
+
   return this
 }
 
@@ -27,30 +34,7 @@ let builder = module.exports = ServiceServer
 builder.prototype = Object.create(Parent.prototype)
 builder.prototype.constructor = builder
 
-
-
-
-var Service = module.exports = new EventEmitter()
-
-Service.create = function Service (opts) {
-  // TODO assert this context is either Service or inherits Service
-  // TODO opts
-  // this create procedure may lead to bugs, it's experimental
-  var instance = Object.create(this)
-  EventEmitter.call(instance) // initialize emitter or pray something
-
-  // oop(instance)
-  // TODO https
-  // .internal('_server', http.createServer())
-  // .internal('_wss', new WebSocketServer({ server: instance._server }))
-
-  return instance
-}
-
-Service.listen = function () {
-  this._server = http.createServer()
-  this._wss = new WebSocketServer({ server: this._server })
-
+builder.prototype.listen = function () {
   // Web Socket Integration
   // Never implement here details of what to do with messages, nor send data
   this._wss.on('connection', (ws) => {
@@ -90,7 +74,7 @@ Service.listen = function () {
       log.info('service will close on %s signals', signals.join(' or '))
     })
     // re-emit server's 'listening' and 'close' events on this service object
-    .on('listening', () => this.emit('listening'))
+    .on('listening', () => this.emit('listening', this._server.address()))
     // aditionally, log when the service server closes
     .on('close', () => log.info('service closed') + this.emit('close'))
 
@@ -134,7 +118,7 @@ Service.listen = function () {
   return this
 }
 
-Service.close = function () {
+builder.prototype.close = function () {
   log.verb('closing websocket server...')
   var init = Date.now()
   this._wss.close(() => {
@@ -151,7 +135,7 @@ Service.close = function () {
   })
   return this
 }
-
+/*
 Service.broadcast = function (data, options, callback) {
   log.debug('broadcast %j to %d clients', data, this._wss.clients.size)
   for (let ws of this._wss.clients) ws.send(data, options, callback)
@@ -167,4 +151,4 @@ Service.websocketId = function (ws) {
     if (val === ws) return wid
   }
   throw abc.Error('this line should never be reached')
-}
+}*/

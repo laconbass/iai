@@ -3,30 +3,37 @@ const oop = require('iai-oop')
 const abc = require('iai-abc')
 const log = abc.log
 
-log.level = abc.Log.VERB
+log.level = log.VERB
 
-const Service = module.exports = new EventEmitter()
+//
+// exports: a builder (aka constructor)
+//
 
-Service.create = function (uri) {
-  // TODO assert this context is either Service or inherits Service
+const Parent = require('events').EventEmitter
 
-  // this create procedure may lead to bugs, it's experimental
-  var instance = Object.create(this)
-  // initialize emitter or pray something
-  EventEmitter.call(instance)
+function ServiceClient () {
+  assert(this instanceof ServiceClient, 'use the new keyword')
 
-  oop(instance)
+  Parent.call(this)
+
+  oop(this)
     // it's supossed this code is for browser so seems safe using document
+    // TODO it may not be for browser motherfucker
     .visible('uri', uri || ('ws://' + document.location.host))
     .internal('_ws', null)
 
-  return instance
+  return this
 }
 
-Service.connect = function () {
+let builder = module.exports = ServiceClient
+
+builder.prototype = Object.create(Parent.prototype)
+builder.prototype.constructor = builder
+
+builder.prototype.connect = function () {
   if (this._ws) {
-    // if already connected, reconnect via 'onclose' event
-    // TODO if already connected, should raise error instead?
+    // when already connected, reconnect via 'onclose' event
+    // TODO when already connected should raise error instead?
     log.warn('websocket already connected, closing to reconnect...')
     this._ws.close()
     return this
@@ -77,7 +84,7 @@ Service.connect = function () {
 }
 
 // this is just a quick-n-dirty way to get it working now
-Service.send = function (msg) {
+builder.prototype.send = function (msg) {
   if (typeof msg !== 'string') {
     // TODO bypass buffer objects
     arguments[0] = JSON.stringify(msg)
