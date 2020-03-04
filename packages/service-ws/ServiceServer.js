@@ -7,7 +7,7 @@ const abc = require('iai-abc')
 const oop = abc.oop
 const log = abc.log
 
-log.level = log.INFO
+log.level = log.VERB
 
 //
 // exports: a builder (aka constructor)
@@ -36,13 +36,12 @@ builder.prototype.constructor = builder
 
 builder.prototype.listen = function () {
   // Web Socket Integration
-  // Never implement here details of what to do with messages, nor send data
   this._wss.on('connection', (ws) => {
     log.info('ws client connected, %d total', this._wss.clients.size)
     // re-emit websocket connection
     this.emit('ws:connection', ws
       // re-emit message events from this websocket on service object
-      .on('message', (data) => this.emit('ws:message', ws, data))
+      .on('message', (data) => this.receive(ws, data))
       // handle websocket errors
       .on('error', function (err) {
         log.error('ws client error %s', err.message)
@@ -87,7 +86,6 @@ builder.prototype.listen = function () {
       socket.on('close', () => {
         this._sockets.splice(this._sockets.indexOf(socket), 1)
         log.verb('socket closed, %s left', this._sockets.length)
-        !this._server.listening && this.emit('close')
       })
     })
     // to free up resources, destroy request's sockets when responses finish
@@ -118,6 +116,14 @@ builder.prototype.listen = function () {
   return this
 }
 
+builder.prototype.url = function () {
+  if (! this._server.listening) {
+    throw new ReferenceError('url is not accesible until server is listening')
+  }
+  let address = this._server.address()
+  return `${os.hostname()}:${address.port}`
+}
+
 builder.prototype.close = function () {
   log.verb('closing websocket server...')
   var init = Date.now()
@@ -133,6 +139,13 @@ builder.prototype.close = function () {
       log.info('it took %sms to close the service', Date.now() - init)
     })
   })
+  return this
+}
+
+// Never implement here details of what to do with messages, nor send data
+builder.prototype.receive = function (ws, data) {
+  log.verb('received %s', data)
+  this.emit('ws:message', ws, data)
   return this
 }
 /*
@@ -152,3 +165,6 @@ Service.websocketId = function (ws) {
   }
   throw abc.Error('this line should never be reached')
 }*/
+
+/* vim: set expandtab: */
+/* vim: set filetype=javascript ts=2 shiftwidth=2: */

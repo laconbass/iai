@@ -1,4 +1,6 @@
+const assert = require('assert')
 const { EventEmitter } = require('events')
+const WebSocket = require('ws')
 const oop = require('iai-oop')
 const abc = require('iai-abc')
 const log = abc.log
@@ -11,8 +13,15 @@ log.level = log.VERB
 
 const Parent = require('events').EventEmitter
 
-function ServiceClient () {
+function ServiceClient (uri) {
   assert(this instanceof ServiceClient, 'use the new keyword')
+
+  if (! uri && 'undefined' === typeof document) {
+    throw new TypeError('There is no document, uri must be provided')
+  }
+  if (! /^ws:\/\//.test(uri)) {
+    uri = `ws://${uri}`
+  }
 
   Parent.call(this)
 
@@ -21,6 +30,9 @@ function ServiceClient () {
     // TODO it may not be for browser motherfucker
     .visible('uri', uri || ('ws://' + document.location.host))
     .internal('_ws', null)
+    .accessor('connected', () => {
+      return this._ws !== null && this._ws.readyState === WebSocket.OPEN
+    })
 
   return this
 }
@@ -40,55 +52,76 @@ builder.prototype.connect = function () {
   }
   log.info('connecting to %s...', this.uri)
   this._ws = new WebSocket(this.uri)
-  // TODO, define handlers here
   // Websocket event handlers
-  this._ws.onopen = (event) => {
-    console.log(event)
-    log.info('connected to %s', this.uri)
-    this.emit('connection')
-  }
-  this._ws.onerror = (event) => {
-    console.log(event)
-    log.error('could not open websocket')
-  }
-  this._ws.onclose = (event) => {
-    console.log(event)
-    log.warn('websocket disconected')
-    this._ws = null
+  return new Promise((resolve, reject) => {
+    this._ws.onopen = event => {
+      //console.log(event)
+      log.info('connected to %s', this.uri)
+      // don't bind reconnection logic until connection is open
+      this._ws.onclose = event => {
+        log.warn('websocket disconected')
+        //console.log(event)
+        this._ws = null
 
-    var t = 5
-    setTimeout(this.connect.bind(this), t * 1000 + 1)
-    var i = setInterval(function () {
-      log.verb('reconnecting in ' + t)
-      if (!--t) clearInterval(i)
-    }, 1000)
-  }
-  this._ws.onmessage = (event) => {
-    try {
-      event = JSON.parse(event.data)
-    } catch (err) {
-      if (err instanceof SyntaxError) {
-        // no valid JSON response, asume it's a string command
-        // TODO just now, shoud re-think the whole thing
-        return this.emit('command', event.data)
+        /*var t = 5
+        setTimeout(() => {
+          this.connect().catch(this.emit.bind(this, 'error'))
+        }, t * 1000 + 1)
+        var i = setInterval(function () {
+          log.verb('reconnecting in ' + t)
+          if (!--t) clearInterval(i)
+        }, 1000)
+        */
       }
-      // throw unknow errors
-      throw err
+      // don't bind message receiving logic until connection is open
+      this._ws.onmessage = (event) => this.receive(event.data)
+      //this.emit('connection')
+      resolve()
     }
-    if (event.name) {
-      log.debug('emit %s(%s)', event.name, event.data || '')
-      return this.emit(event.name, event.data)
+    this._ws.onerror = event => {
+      log.error(`could not open websocket (code ${event.error.code})`)
+      switch (event.error.code) {
+        case 'EAI_AGAIN':
+          // see https://www.codingdefined.com/2015/06/nodejs-error-errno-eaiagain.html
+          log.warn('A temporary failure in name resolution occurred')
+          break
+      }
+      reject(event.error)
     }
-    throw new Error('invalid websocket response')
-  }
+  })
 }
 
 // this is just a quick-n-dirty way to get it working now
-builder.prototype.send = function (msg) {
-  if (typeof msg !== 'string') {
+builder.prototype.send = function (data) {
+  if (typeof data !== 'string') {
     // TODO bypass buffer objects
-    arguments[0] = JSON.stringify(msg)
+    arguments[0] = JSON.stringify(data)
   }
   this._ws.send.apply(this._ws, arguments)
   return this
 }
+
+builder.prototype.disconnect = function () {
+}
+
+builder.prototype.receive = function (data) {
+  assert.ok(typeof data, 'string', 'expected data as string')
+  try {
+    data = JSON.parse(data)
+  } catch (err) {
+    if (err instanceof SyntaxError) {
+      // no valid JSON response, emit as ws:message
+      log.verb('received %s', data)
+      return this.emit('ws:message', data)
+    }
+    // throw unknow errors
+    throw err
+  }
+  if (data.event) {
+    log.verb('emit %s(%s)', data.event, data)
+    return this.emit(data.event, data)
+  }
+  throw new Error('invalid websocket response')
+}
+/* vim: set expandtab: */
+/* vim: set filetype=javascript ts=2 shiftwidth=2: */
