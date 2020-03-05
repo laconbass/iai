@@ -11,10 +11,10 @@ log.level = log.VERB
 // exports: a builder (aka constructor)
 //
 
-const Parent = require('events').EventEmitter
+const Parent = require('./ServiceActor')
 
-function ServiceClient (uri) {
-  assert(this instanceof ServiceClient, 'use the new keyword')
+let builder = module.exports = function ServiceClient (uri) {
+  assert(this instanceof builder, 'use the new keyword')
 
   if (! uri && 'undefined' === typeof document) {
     throw new TypeError('There is no document, uri must be provided')
@@ -37,19 +37,18 @@ function ServiceClient (uri) {
   return this
 }
 
-let builder = module.exports = ServiceClient
 
 builder.prototype = Object.create(Parent.prototype)
 builder.prototype.constructor = builder
 
+builder.prototype.send = function (data) {
+  return Parent.prototype.send.call(this, data, this._ws)
+}
+
 builder.prototype.connect = function () {
-  if (this._ws) {
-    // when already connected, reconnect via 'onclose' event
-    // TODO when already connected should raise error instead?
-    log.warn('websocket already connected, closing to reconnect...')
-    this._ws.close()
-    return this
-  }
+  assert.strictEqual(this.connected, false, 'already connected')
+  // TODO WebSocket may be also connecting, or closing
+
   log.info('connecting to %s...', this.uri)
   this._ws = new WebSocket(this.uri)
   // Websocket event handlers
@@ -91,37 +90,10 @@ builder.prototype.connect = function () {
   })
 }
 
-// this is just a quick-n-dirty way to get it working now
-builder.prototype.send = function (data) {
-  if (typeof data !== 'string') {
-    // TODO bypass buffer objects
-    arguments[0] = JSON.stringify(data)
-  }
-  this._ws.send.apply(this._ws, arguments)
+builder.prototype.disconnect = function (code, reason) {
+  this._ws.close(code, reason)
   return this
 }
 
-builder.prototype.disconnect = function () {
-}
-
-builder.prototype.receive = function (data) {
-  assert.ok(typeof data, 'string', 'expected data as string')
-  try {
-    data = JSON.parse(data)
-  } catch (err) {
-    if (err instanceof SyntaxError) {
-      // no valid JSON response, emit as ws:message
-      log.verb('received %s', data)
-      return this.emit('ws:message', data)
-    }
-    // throw unknow errors
-    throw err
-  }
-  if (data.event) {
-    log.verb('emit %s(%s)', data.event, data)
-    return this.emit(data.event, data)
-  }
-  throw new Error('invalid websocket response')
-}
 /* vim: set expandtab: */
 /* vim: set filetype=javascript ts=2 shiftwidth=2: */

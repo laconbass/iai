@@ -13,8 +13,6 @@
   "author": "Lorenzo García Rivera",
   "license": "SEE LICENSE IN README.md",
   "dependencies": {
-    "iai-abc": "file:///home/lorenzo/repos/iai/packages/iai-abc",
-    "iai-oop": "file:///home/lorenzo/repos/iai/packages/iai-oop",
     "ws": "^7.2.1"
   },
   "devDependencies": {

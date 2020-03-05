@@ -1,10 +1,11 @@
 
 const assert = require('assert')
 
-console.log('TESTING', require.resolve('../'))
+console.log('TEST node', require.resolve('../'))
 
 const ServiceServer = require('../ServiceServer');
 const ServiceClient = require('../ServiceClient')
+const WebSocket = require('ws')
 
 assert.equal(typeof ServiceServer, 'function', 'Server should export a function')
 assert.equal(typeof ServiceClient, 'function', 'Client should export a function')
@@ -16,30 +17,29 @@ try {
   server = new ServiceServer()
 }
 catch (error) {
-  console.error('should be able to instantiate without arguments')
+  console.log('FAIL should be able to instantiate without arguments')
   throw error
 }
 
 const { EventEmitter } = require('events')
 assert.ok(server instanceof EventEmitter, 'server should extend EventEmitter')
 assert.ok(EventEmitter.prototype.isPrototypeOf(server), 'server should inherit EventEmitter')
+console.log('PASS server inheritance chain seems ok')
 
-console.log('server inheritance chain seems ok')
+assert.equal(typeof server.listen, 'function', 'server should implement #listen()' )
+assert.equal(typeof server.close, 'function', 'server should implement #close()' )
+assert.equal(typeof server.url, 'function', 'server should implement #url()' )
+assert.equal(typeof server.send, 'function', 'server should implement #send()' )
+
+assert.strictEqual(server.listening, false, 'server should not be listening' )
+assert.throws(() => server.url(), /listening/, 'server#url() should throw when not listening')
+
+console.log('PASS server interface implementation seems ok')
 
 process.stdin.resume()
-console.log('asynchronous tests begin (stdin resumed)')
+console.log('INFO asynchronous tests begin (stdin resumed)')
 
 new Promise((resolve, reject) => {
-  assert.equal(typeof server.listen, 'function', 'server should implement #listen()' )
-  assert.strictEqual( server.listening, false, 'server should not be listening' )
-  assert.equal(typeof server.close, 'function', 'server should implement #close()' )
-  assert.equal(typeof server.url, 'function', 'server should implement #url()' )
-  try {
-    server.url()
-    assert.ok(false, 'server#url() should fail when not listening')
-  } catch (error) {
-    assert.ok(/listening/.test(error.message), 'error should reference listening')
-  }
   server
     .on('listening', address => {
       assert.strictEqual(server.listening, true, 'server should be listening')
@@ -48,6 +48,7 @@ new Promise((resolve, reject) => {
       assert.ok(address.port, 'address should contain .port')
       let url = server.url()
       assert.ok(url, 'server.url() should return something')
+      console.log('PASS server emits "listening" when it is listening')
       resolve(url)
     })
     .listen()
@@ -58,36 +59,88 @@ new Promise((resolve, reject) => {
   assert.equal(typeof client.disconnect, 'function', 'client should implement #disconnect()' )
   assert.equal(typeof client.send, 'function', 'client should implement #send()' )
   assert.strictEqual(client.connected, false, 'client should not be connected' )
+  console.log('PASS client implementation seems ok')
+
   return new Promise((resolve, reject) => {
     let promise = client.connect()
     assert.ok(promise instanceof Promise, 'client#connect() should return a promise' )
     promise.then(resolve).catch(reject)
   })
 })
+// client => server communication (string)
 .then(() => new Promise((resolve, reject) => {
-  server.once('ws:message', (ws, msg) => {
+  server.once('ws:message', (msg, ws) => {
     assert.strictEqual(msg, 'foo', 'should receive foo')
+    assert(ws instanceof WebSocket, 'should receive instanceof WebSocket')
+    console.log('PASS client can communicate strings to server')
     resolve(ws)
   })
   client.send('foo')
 }))
+// server => client communication (string)
 .then((ws) => new Promise((resolve, reject) => {
   client.once('ws:message', (msg) => {
     assert.strictEqual(msg, 'bar', 'should receive bar')
+    console.log('PASS server can communicate strings to client')
     resolve()
   })
-  ws.send('bar')
+  server.send('bar', ws)
+}))
+// client => server communication (object)
+.then(() => new Promise((resolve, reject) => {
+  server.once('ws:message', (msg, ws) => {
+    assert.equal(typeof msg, 'object', 'should receive object')
+    assert.deepEqual(msg, { foo: 'bar', baz: [ 1, 2, 3 ]}, 'object should be as sent')
+    assert(ws instanceof WebSocket, 'should receive instanceof WebSocket')
+    console.log('PASS client can communicate objects to server')
+    resolve(ws)
+  })
+  client.send({ foo: 'bar', baz: [ 1, 2, 3] })
+}))
+// server => client communication (object)
+.then((ws) => new Promise((resolve, reject) => {
+  client.once('ws:message', (msg) => {
+    assert.equal(typeof msg, 'object', 'should receive object')
+    assert.deepEqual(msg, { foo: 'bar', baz: [ 1, 2, 3 ]}, 'object should be as sent')
+    console.log('PASS server can communicate objects to client')
+    resolve()
+  })
+  server.send({ foo: 'bar', baz: [ 1, 2, 3] }, ws)
+}))
+// client => server communication (event)
+.then(() => new Promise((resolve, reject) => {
+  server.once('something:custom', (data, ws) => {
+    assert.equal(typeof data, 'object', 'should receive object')
+    assert.deepEqual(data.baz, [ 1, 2, 3 ], 'data should be as sent')
+    assert(ws instanceof WebSocket, 'should receive instanceof WebSocket')
+    console.log('PASS client can communicate events to server')
+    resolve(ws)
+  })
+  client.send({ event: 'something:custom', baz: [ 1, 2, 3] })
+}))
+// server => client communication (event)
+.then((ws) => new Promise((resolve, reject) => {
+  client.once('other:custom:event', (data) => {
+    assert.equal(typeof data, 'object', 'should receive object')
+    assert.deepEqual(data.foo, [ true, false, null ], 'data should be as sent')
+    console.log('PASS server can communicate events to client')
+    resolve()
+  })
+  server.send({ event: 'other:custom:event', foo: [ true, false, null] }, ws)
 }))
 .then(() => client.disconnect())
 .then(() => server.close())
 .catch(error => {
-  console.error('something failed during asynchronous tests:')
-  console.error(error)
+  console.error(error.stack)
+  if (error.code === 'ERR_ASSERTION') {
+    console.log('FAIL', `${error.actual} should be ${error.operator} ${error.expected}`)
+  }
+  console.log('FAIL', error.message)
 })
 .finally(() => {
   process.stdin.pause()
-  console.log(`${require.resolve('../')} test end (stdin paused)`)
-  console.log('If everything went ok, node process should gracefully exit')
+  console.log(`INFO ${require.resolve('../')} test end (stdin paused)`)
+  console.log('INFO If everything went ok, node process should gracefully exit')
 })
 /*
 test('server', function( t ){

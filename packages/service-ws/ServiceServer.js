@@ -13,10 +13,10 @@ log.level = log.VERB
 // exports: a builder (aka constructor)
 //
 
-const Parent = require('events').EventEmitter
+const Parent = require('./ServiceActor')
 
-function ServiceServer () {
-  assert(this instanceof ServiceServer, 'use the new keyword')
+let builder = module.exports = function ServiceServer () {
+  assert(this instanceof builder, 'use the new keyword')
 
   Parent.call(this)
 
@@ -29,8 +29,6 @@ function ServiceServer () {
   return this
 }
 
-let builder = module.exports = ServiceServer
-
 builder.prototype = Object.create(Parent.prototype)
 builder.prototype.constructor = builder
 
@@ -41,7 +39,7 @@ builder.prototype.listen = function () {
     // re-emit websocket connection
     this.emit('ws:connection', ws
       // re-emit message events from this websocket on service object
-      .on('message', (data) => this.receive(ws, data))
+      .on('message', (data) => this.receive(data, ws))
       // handle websocket errors
       .on('error', function (err) {
         log.error('ws client error %s', err.message)
@@ -142,12 +140,6 @@ builder.prototype.close = function () {
   return this
 }
 
-// Never implement here details of what to do with messages, nor send data
-builder.prototype.receive = function (ws, data) {
-  log.verb('received %s', data)
-  this.emit('ws:message', ws, data)
-  return this
-}
 /*
 Service.broadcast = function (data, options, callback) {
   log.debug('broadcast %j to %d clients', data, this._wss.clients.size)

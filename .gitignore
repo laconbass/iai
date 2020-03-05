@@ -19,6 +19,7 @@ abc/iaido/example/*
 npm-debug.log
 node_modules/*
 lib/**/node_modules/*
+packages/**/node_modules/*
 abc/iaido/node_modules/*
 
 dojo/db/fixtures/fs/?0*
