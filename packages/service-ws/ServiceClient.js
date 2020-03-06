@@ -56,11 +56,17 @@ builder.prototype.connect = function () {
     this._ws.onopen = event => {
       //console.log(event)
       log.info('connected to %s', this.uri)
+      // don't bind message receiving logic until connection is open
+      this._ws.onmessage = event => this.receive(event.data, this._ws)
       // don't bind reconnection logic until connection is open
       this._ws.onclose = event => {
-        log.warn('websocket disconected')
-        //console.log(event)
+        log.info('websocket disconected')
         this._ws = null
+        this.emit('disconnect', {
+          code: event.code,
+          reason: event.reason,
+          wasClean: event.wasClean,
+        })
 
         /*var t = 5
         setTimeout(() => {
@@ -72,9 +78,7 @@ builder.prototype.connect = function () {
         }, 1000)
         */
       }
-      // don't bind message receiving logic until connection is open
-      this._ws.onmessage = (event) => this.receive(event.data)
-      //this.emit('connection')
+      this.emit('connection', this._ws)
       resolve()
     }
     this._ws.onerror = event => {

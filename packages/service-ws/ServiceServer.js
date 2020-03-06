@@ -64,7 +64,7 @@ builder.prototype.listen = function () {
     // handle posible process signals to properly close the service
     .on('listening', () => {
       var signals = ['SIGUSR2', 'SIGINT']
-      signals.forEach(signal => process.on(signal, () => {
+      signals.forEach(signal => process.once(signal, () => {
         log.warn('received %s signal, closing service...', signal)
         this.close()
       }))
@@ -72,8 +72,6 @@ builder.prototype.listen = function () {
     })
     // re-emit server's 'listening' and 'close' events on this service object
     .on('listening', () => this.emit('listening', this._server.address()))
-    // aditionally, log when the service server closes
-    .on('close', () => log.info('service closed') + this.emit('close'))
 
   // will need to keep record of socket connections to allow a gracefull shutdown
   this._sockets = []
@@ -98,8 +96,8 @@ builder.prototype.listen = function () {
         var code = res.statusCode
         var time = Date.now() - tinit
         log[code < 400 ? 'info' : code < 500 ? 'warn' : 'error'](
-          '%s %s %sms',
-          res.statusCode, req.url, Date.now() - tinit
+          '%s %s %sms (%s)',
+          res.statusCode, req.url, Date.now() - tinit, ip
         )
         if (time > 1000) {
           log.warn('it took %s seconds to handle %s', time / 1000, req.url)
@@ -126,15 +124,12 @@ builder.prototype.close = function () {
   log.verb('closing websocket server...')
   var init = Date.now()
   this._wss.close(() => {
-    /* this should never be needed
-    if (this._sockets.length) {
-      log.warn('destroying %s opened sockets...', this._sockets.length)
-      this._sockets.forEach(socket => socket.destroy())
-    }
-    // */
+    // this should never be needed
+    //if (this._sockets.length) this._sockets.forEach(socket => socket.destroy())
     log.verb('websocket server closed, closing server...')
     this._server.close(() => {
-      log.info('it took %sms to close the service', Date.now() - init)
+      log.info('service closed in %sms', Date.now() - init)
+      this.emit('close')
     })
   })
   return this

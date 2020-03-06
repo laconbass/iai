@@ -9,9 +9,9 @@
   "author": "Lorenzo García Rivera",
   "license": "SEE LICENSE IN README.md",
   "dependencies": {
-    "@iaigz/abc-events": "file:///home/lorenzo/repos/iai/packages/abc-events",
-    "@iaigz/service-ws": "file:///home/lorenzo/repos/iai/packages/service-ws",
+    "@iaigz/abc-events": "file:../abc-events",
+    "@iaigz/service-ws": "file:../service-ws",
     "iai-abc": "file:///home/lorenzo/repos/iai/packages/iai-abc",
-    "iai-oop": "file:///home/lorenzo/repos/iai/packages/iai-oop"
+    "iai-oop": "file:../iai-oop"
   }
 }

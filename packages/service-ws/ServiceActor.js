@@ -4,7 +4,7 @@ const WebSocket = require('ws')
 const abc = require('iai-abc')
 const log = abc.log
 
-log.level = log.VERB
+log.level = log.INFO
 
 //
 // exports: a builder (aka constructor)
@@ -24,18 +24,20 @@ builder.prototype = Object.create(Parent.prototype)
 builder.prototype.constructor = builder
 
 // this is just a quick-n-dirty way to get it working now
-builder.prototype.send = function (data, ws) {
+builder.prototype.send = function (data, destination) {
+  assert.ok(destination instanceof WebSocket, 'destination should be a WebSocket instance')
   if (typeof data !== 'string') {
     // TODO bypass buffer objects
     data = JSON.stringify(data)
   }
-  ws.send(data)
+  destination.send(data)
   return this
 }
 
 // Never implement here details of what to do with messages, nor send data
-builder.prototype.receive = function (data, ws) {
+builder.prototype.receive = function (data, origin) {
   assert.ok(typeof data, 'string', 'expected data as string')
+  assert.ok(origin instanceof WebSocket, 'origin should be a WebSocket instance')
   try {
     data = JSON.parse(data)
     log.verb('received object: %j', data)
@@ -51,9 +53,9 @@ builder.prototype.receive = function (data, ws) {
   }
   if (data.event) {
     log.verb('emit %s(%j)', data.event, Object.keys(data))
-    return this.emit(data.event, data, ws)
+    return this.emit(data.event, data, origin)
   }
-  return this.emit('ws:message', data, ws)
+  return this.emit('ws:message', data, origin)
 }
 
 /* vim: set expandtab: */
