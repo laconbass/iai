@@ -16,6 +16,7 @@ View.prototype.constructor = View
 // static method allowing View constructor to have a default document source
 // this is the reason why this constructor depends on iai-ui singleton
 View.createElement = (tag, document = ui.$doc ) => {
+  assert('string' == typeof tag)
   assert(document instanceof HTMLDocument, 'ui is not initialized')
   return document.createElement(tag)
 }

@@ -6,7 +6,7 @@ let gui = new GUI()
 
 gui
   .on('client:created', client => client.layout({
-    horizontal: 3, only: 1
+    horizontal: 2, only: 0
   }))
   .on('request', (req, res) => {
     console.warn('received request')

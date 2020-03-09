@@ -11,10 +11,11 @@
   "dependencies": {
     "@iaigz/core-log": "file:../core-log",
     "@iaigz/service-ws": "file:../service-ws",
+    "@iaigz/util-ansi": "file:../util-ansi",
+    "@iaigz/util-callsite": "file:../util-callsite",
+    "@iaigz/util-dynamed": "file:../util-dynamed",
+    "iai-abc": "file:../iai-abc",
     "iai-oop": "file:../iai-oop"
-  },
-  "peerDependencies": {
-    "electron": ">= 8"
   },
   "directories": {
     "test": "test"

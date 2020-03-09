@@ -13,8 +13,12 @@
   "author": "Lorenzo García Rivera",
   "license": "SEE LICENSE IN README.md",
   "dependencies": {
-    "ws": "^7.2.1",
     "bufferutil": "^4.0.1",
-    "utf-8-validate": "^5.0.2"
-  }
+    "iai-oop": "file:../iai-oop",
+    "utf-8-validate": "^5.0.2",
+    "ws": "^7.2.1"
+  },
+  "bundleDependencies": [
+    "iai-oop"
+  ]
 }

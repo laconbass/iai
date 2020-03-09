@@ -19,10 +19,27 @@ ui
     ui.stop = () => clearInterval(timer)
 
     // uso de plugins (componentes)
-    ui.plugin('main', new Menu(document.createElement('menu')))
-      .then(() => ui.deploy(ui.main))
+    console.log(new Menu.Button())
+    console.log(new Menu.Toggler())
+    console.log(new Menu.Trigger())
+    return ui
+      .plugin('menu', new Menu([
+        new Menu.Toggler({
+          text: 'toggle',
+          action: () => ui.toggle(),
+        }),
+        new Menu.Trigger({
+          text: 'start',
+          action: () => ui.start(),
+        }),
+        new Menu.Trigger({
+          text: 'stop',
+          action: () => ui.stop(),
+        }),
+      ]))
+      .then(() => ui.deploy(ui.menu))
   })
-  .catch(reason => {
+/*  .catch(reason => {
     console.error(reason)
     ui.notify.error(`fallou unha promesa por ${reason}`)
   })

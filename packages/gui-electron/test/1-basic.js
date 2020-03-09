@@ -1,5 +1,4 @@
 const assert = require('assert')
-const WebSocket = require('ws')
 
 console.log('TEST node', require.resolve('../'))
 

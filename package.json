@@ -13,7 +13,8 @@
     "@iaigz/tool-package-sources"
   ],
   "dependencies": {
-    "@iaigz/tool-package-cwdpackage": "file:packages/tool-package-cwdpackage",
-    "@iaigz/tool-package-sources": "file:packages/tool-package-sources"
+    "@iaigz/tool-package-cwdpackage": "file:./packages/tool-package-cwdpackage",
+    "@iaigz/tool-package-sources": "file:./packages/tool-package-sources",
+    "budo": "^11.6.3"
   }
 }
