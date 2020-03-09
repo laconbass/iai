@@ -1,6 +1,5 @@
 const fs = require('fs')
-const abc = require('iai-abc')
-const log = abc.log
+const log = require('@iaigz/core-log')
 
 //log.level = abc.Log.VERB
 

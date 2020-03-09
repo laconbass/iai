@@ -1,0 +1,26 @@
+{
+  "name": "@iaigz/util-ansi",
+  "version": "1.0.0",
+  "main": "backend.js",
+  "browser": "browser.js",
+  "files": [
+    "backend.js",
+    "browser.js"
+  ],
+  "scripts": {
+    "test": "NODE_ENV=test node test.js"
+  },
+  "description": "utility to store ansi escape sequences for VT-100 compatible terminal interpreters",
+  "keywords": [
+    "iai",
+    "util",
+    "ansi",
+    "terminal",
+    "color",
+    "ansi",
+    "escape",
+    "sequences"
+  ],
+  "author": "Lorenzo García Rivera",
+  "license": "CC-BY-SA-4.0"
+}

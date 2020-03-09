@@ -19,7 +19,7 @@ if (argv.length > 1 || argv[0] == '--usage' || argv[0] == '--help') {
   process.exit(1)
 }
 
-var packdata = require('iai-abc/lib/tool/packdata')
+let packdata = require('@iaigz/tool-package-cwdpackage')
 
 var pkg = packdata(argv[0])
 
@@ -36,29 +36,31 @@ console.log('  browser: ' + pkg.browser)
 
 function describe (deps) {
   return deps
-    ? Object.keys(deps).map((name) => name + '@' + deps[name]).join(', ')
+    ? Object.keys(deps).map((name) => name + ' > ' + deps[name]).join(',\n        ')
     : 'undefined'
 }
 console.log()
 console.log('dependencies (need=normal, bund=bundle, opt=optional)')
-console.log('  need:', describe(pkg.dependencies))
-console.log('   dev:', describe(pkg.devDependencies))
-console.log('  peer:', describe(pkg.peerDependencies))
-console.log('  bund:', describe(pkg.bundledDependencies))
-console.log('   opt:', describe(pkg.optionalDependencies))
+pkg.dependencies && console.log('  need:', describe(pkg.dependencies))
+pkg.devDependencies && console.log('   dev:', describe(pkg.devDependencies))
+pkg.peerDependencies && console.log('  peer:', describe(pkg.peerDependencies))
+let bundle = pkg.bundledDependencies || pkg.bundleDependencies
+bundle && console.log('  bund:', describe(bundle))
+pkg.optionalDependencies && console.log('   opt:', describe(pkg.optionalDependencies))
 
+console.log()
 if (pkg.directories) {
-  console.log()
   console.log('structure: ' + JSON.stringify(pkg.directories, null, 2))
 } else {
   console.log('no directories defined')
 }
 
+console.log()
 if (pkg.scripts) {
-  console.log()
-  console.log('relevant scripts:')
-  console.log('  start: ' + pkg.scripts.start)
-  console.log('  test : ' + pkg.scripts.test)
+  console.log('available scripts:')
+  Object.keys(pkg.scripts).forEach(key => {
+    console.log(`  ${key}: ${pkg.scripts[key]}`)
+  })
 } else {
   console.log('no scripts defined')
 }

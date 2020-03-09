@@ -13,13 +13,7 @@
   "author": "Lorenzo García Rivera",
   "license": "SEE LICENSE IN README.md",
   "dependencies": {
-    "ws": "^7.2.1"
-  },
-  "devDependencies": {
-    "tap-spec": "^4.1.1",
-    "tape": "^4.5.1"
-  },
-  "optionalDependencies": {
+    "ws": "^7.2.1",
     "bufferutil": "^4.0.1",
     "utf-8-validate": "^5.0.2"
   }

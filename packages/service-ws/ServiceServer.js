@@ -3,10 +3,10 @@ const http = require('http')
 const assert = require('assert')
 const WebSocket = require('ws')
 
-const abc = require('iai-abc')
-const oop = abc.oop
-const log = abc.log
+const oop = require('iai-oop')
 
+const Log = require('@iaigz/core-log')
+const log = new Log()
 log.level = log.VERB
 
 //
@@ -96,8 +96,8 @@ builder.prototype.listen = function () {
         var code = res.statusCode
         var time = Date.now() - tinit
         log[code < 400 ? 'info' : code < 500 ? 'warn' : 'error'](
-          '%s %s %sms (%s)',
-          res.statusCode, req.url, Date.now() - tinit, ip
+          '%s %s > %s (%sms)',
+          req.method, req.url, res.statusCode, Date.now() - tinit, ip
         )
         if (time > 1000) {
           log.warn('it took %s seconds to handle %s', time / 1000, req.url)
@@ -121,6 +121,7 @@ builder.prototype.url = function () {
 }
 
 builder.prototype.close = function () {
+  assert.ok(this.listening, 'must be listening to close')
   log.verb('closing websocket server...')
   var init = Date.now()
   this._wss.close(() => {

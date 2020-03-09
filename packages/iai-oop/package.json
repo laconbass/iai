@@ -7,13 +7,6 @@
     "index.js",
     "LICENSE"
   ],
-  "devDependencies": {
-    "chai": "~1.8.0",
-    "iai-test": "*",
-    "istanbul": "~0.2.0",
-    "mocha": "^2.2.5",
-    "mocha-istanbul": "~0.2.0"
-  },
   "scripts": {
     "test": "node node_modules/.bin/mocha --reporter spec"
   },

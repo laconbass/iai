@@ -10,35 +10,41 @@
 
 // DEPENDENCIES
 
-var path = require('path');
-var sources = require('iai-abc/lib/tool/sources');
+const path = require('path')
+const sources = require('@iaigz/tool-package-sources')
+const cwdpackage = require('@iaigz/tool-package-cwdpackage')
 
 // ARGV
 
-var argv = process.argv.slice( 2 );
+let argv = process.argv.slice(2)
 if( argv.length > 1 || argv[0] == '--usage' || argv[0] == '--help' ){
-  console.log('Usage: dependants [path to module or package]');
-  process.exit(1);
+  console.log('Usage: dependants [path to module *.js or package dir]')
+  process.exit(1)
 }
 
-var modpath = path.resolve(argv[0] || '')
+let modpath = path.resolve(argv[0] || cwdpackage().__dirname)
+let mod = null
+
+console.error('researching %s dependencies...', modpath)
 
 try {
-  var path = require.resolve(modpath);
-  var mod = require( path );
+  modpath = require.resolve(modpath)
+  mod = require(modpath)
 } catch( err ){
   if( err.code === 'MODULE_NOT_FOUND' ){
     if(!~err.message.indexOf(modpath)){
       // not found module error may be related to a missing dependency
       throw err
     }
-    console.error( path + ' is not a commonjs package' );
-    process.exit(1);
+    console.error(modpath + ' does not resolve to a CommonJS module')
+    console.error(require(path.resolve(modpath, 'package.json')))
+    console.error('Maybe package.json "main" file is missing? check above')
+    process.exit(1)
   }
   throw err;
 }
 var t = Date.now()
-var result = sources(require.cache[path])
+var result = sources(require.cache[modpath])
 t = Date.now() - t
 console.log(JSON.stringify(result, null, 4))
-console.error('%s DEPENDS ON %s FILES (%sms)', path, result.length, t)
+console.error('%s DEPENDS ON %s FILES (%sms)', modpath, result.length, t)

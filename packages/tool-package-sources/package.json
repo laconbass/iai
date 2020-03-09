@@ -1,0 +1,17 @@
+{
+  "name": "@iaigz/tool-package-sources",
+  "version": "1.0.0",
+  "description": "utility function to research the *.js files any CommonJS module depends from",
+  "main": "sources.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "iai",
+    "tool",
+    "package",
+    "sources"
+  ],
+  "author": "Lorenzo García Rivera",
+  "license": "CC-BY-SA-4.0"
+}

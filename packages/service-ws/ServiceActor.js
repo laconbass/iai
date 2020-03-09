@@ -1,9 +1,8 @@
 const assert = require('assert')
 const WebSocket = require('ws')
 
-const abc = require('iai-abc')
-const log = abc.log
-
+const Log = require('@iaigz/core-log')
+const log = new Log()
 log.level = log.INFO
 
 //

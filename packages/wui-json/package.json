@@ -1,0 +1,24 @@
+{
+  "name": "@iaigz/wui-json",
+  "version": "1.0.0",
+  "description": "Web User Interface components to ease working with json objects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "iai",
+    "ui",
+    "json"
+  ],
+  "files": [
+    "ObjectEditor.*",
+    "ObjectViewer.*",
+    "index.js"
+  ],
+  "author": "Lorenzo García Rivera",
+  "license": "CC-BY-SA-4.0",
+  "dependencies": {
+    "@iaigz/wui": "file:../wui"
+  }
+}

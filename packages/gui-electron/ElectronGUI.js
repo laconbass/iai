@@ -7,9 +7,8 @@ const path = require('path')
 const assert = require('assert')
 const { spawn } = require('child_process')
 
-const iai = require('iai-abc')
-const log = iai.log
-
+const Log = require('@iaigz/core-log')
+const log = new Log()
 log.level = log.VERB
 
 // internal reference to the electron binary
@@ -90,9 +89,11 @@ function ElectronGUI(opts = {}) {
       this.emit('client:created', this.clients[id])
     })
     .on('request', (req, res) => {
-      log.warn('received a request')
-      res.statusCode = 404
-      res.end('Working on')
+      if (this.listenerCount('request') < 1) {
+        res.statusCode = 404
+        return res.end('Working on')
+      }
+      this.emit('request', req, res)
     })
 
   return this
@@ -201,18 +202,16 @@ builder.Client.prototype.layout = function (opts = {}) {
 builder.Client.prototype.calculateLayout = function (opts = {}) {
   opts = {
     rest: 0, // default rest fraction on first window (or first row, first col)
+    only: [], // default to show all windows
     vertical: 1, // default to 1 row
     horizontal: 1, // default to 1 column
     ...opts
   }
+  if (! Array.isArray(opts.only) ) {
+    opts.only = [opts.only]
+  }
   if (opts.horizontal > 0 && opts.vertical > 0) {
     return this.calculateGridLayout(opts)
-  }
-  if (opts.horizontal > 0) {
-    return this.calculateHorizontalLayout(opts)
-  }
-  if (opts.vertical > 0) {
-    return this.calculateVerticalLayout(opts)
   }
   throw new TypeError('cannot determine a layout strategy')
 }
@@ -227,7 +226,7 @@ builder.Client.prototype.calculateGridLayout = function (opts) {
   let restX = width % factorX
   let factorY = opts.vertical
   let restY = height % factorY
-  return Array(factorX * factorY)
+  let result = Array(factorX * factorY)
     .fill({ // base dimensions
       width: Math.floor(width / factorX),
       height: Math.floor(height / factorY),
@@ -239,115 +238,34 @@ builder.Client.prototype.calculateGridLayout = function (opts) {
       //floorY: Math.floor(idx / factorY), modY: idx % factorY,
       //floorX: Math.floor(idx / factorX), modX: idx % factorX,
     }})
-    .map((grid) => { return {
-      ...grid, // correct base dimensions:
+  // correct base dimensions with fraction rest
+  if (restX > 0 || restY > 0) {
+    result = result.map((grid) => { return {
+      ...grid,
       width: grid.width + (grid.col == opts.rest ? restX : 0),
       height: grid.height + (grid.row == opts.rest ? restY : 0),
     }})
-    .map((geom, idx, all) => { return {
-      ...geom, // calculate { x, y } position
-      x: x + all
-        .filter(e => e.row == geom.row && e.col < geom.col)
-        .reduce((acc, cur) => acc + cur.width, 0),
-      y: y + all
-        .filter(e => e.col == geom.col && e.row < geom.row)
-        .reduce((acc, cur) => acc + cur.height, 0),
-    }})
-}
-
-builder.Client.prototype.calculateHorizontalLayout = function (opts) {
-  let current = this.screen.displays
-    .find(display => display.id === this.screen.current)
-  assert.ok(current, 'cannot find current display')
-  // see https://www.electronjs.org/docs/api/structures/display#display-object
-  let { x, y, width, height } = current.workArea
-  let factor = opts.horizontal
-  let rest = width % factor
-  if (rest > 0) {
-    assert.ok(opts.rest >= 0, `${opts.rest} must be zero or greater`)
-    assert.ok(opts.rest < factor, `${opts.rest} must be less than ${factor}`)
   }
-  return Array(factor).fill({})
-    .map((e, idx) => { return {
-      width: Math.floor(width / factor) + (idx == opts.rest ? rest : 0),
-      height: height,
-    }})
-    .map((geometry, idx, all) => { return {
-      ...geometry,
-      // esta lóxica situa ventás de esquerda a dereita, pegadas
-      x: x + all.slice(0, idx).reduce((acc, cur) => acc + cur.width, 0),
-      y: y, // borde superior
-    }})
-}
-
-builder.Client.prototype.calculateVerticalLayout = function (opts) {
-  let current = this.screen.displays
-    .find(display => display.id === this.screen.current)
-  assert.ok(current, 'cannot find current display')
-  // see https://www.electronjs.org/docs/api/structures/display#display-object
-  let { x, y, width, height } = current.workArea
-  let factor = opts.vertical
-  let rest = height % factor
-  if (rest > 0) {
-    assert.ok(opts.rest >= 0, `${opts.rest} must be zero or greater`)
-    assert.ok(opts.rest < factor, `${opts.rest} must be less than ${factor}`)
+  // calculate { x, y } position
+  result = result.map((geom, idx, all) => { return {
+    ...geom,
+    x: x + all
+      .filter(e => e.row == geom.row && e.col < geom.col)
+      .reduce((acc, cur) => acc + cur.width, 0),
+    y: y + all
+      .filter(e => e.col == geom.col && e.row < geom.row)
+      .reduce((acc, cur) => acc + cur.height, 0),
+  }})
+  // filter desirable windows
+  if (opts.only.length > 0) {
+    result = result.filter((geom, idx) => ~opts.only.indexOf(idx))
   }
-  return Array(factor).fill({}) // else will make an array of null values
-    .map((e, idx) => { return {
-      width: width,
-      height: Math.floor(height / factor) + (idx == opts.rest ? rest : 0),
-    }})
-    .map((geometry, idx, all) => { return {
-      ...geometry,
-      x: x, // borde esquerdo
-      // esta lóxica situa ventás de arriba a abaixo, pegadas
-      y: y + all.slice(0, idx).reduce((acc, cur) => acc + cur.height, 0),
-    }})
+  return result
 }
 
       //x: x + width - (geometry.width), // borde dereito
       //x: x + Math.floor(width / 3) * 2, // no último terzo
       //y: y + Math.floor((height - geometry.height) / 2), // centro vertical
-
-/*
-
-// controls the spawning of the child process running electron
-exports.visible('start', function (url = '', bin = electron) {
-  if (cp) {
-    // DO NOT START TWICE!! One child process is enought
-    throw new Error('ALREADY STARTED MOTHERFUCKER')
-  }
-  log.verb('Will spawn the electron process now')
-  cp = spawn(electron, [path.join(__dirname, 'backend')], {
-    cwd: process.cwd(),
-    env: process.env,
-    stdio: [null, 'pipe', 'pipe']
-  })
-  // ensure electron is killed if process exits
-  process.on('exit', cp.kill.bind(cp, 'SIGTERM'))
-
-  // neccessary to see messages writen to stdX from electron process
-  // TODO (YAGNI) option to change the streams to pipe cp.stdX to??
-  cp.stdout.pipe(process.stdout)
-  cp.stderr.pipe(process.stderr)
-
-  // TODO gui listening for itself seems not good
-  // loadUrl should be a method and a window should be specified
-  url && this.on('app:ready', function () {
-    cp.send({ control: 'win.loadURL', args: [url] })
-  })
-
-  return this
-})
-
-// sends a message to the electron child process (through ipc)
-exports.visible('send', function (msg) {
-  if (!cp) {
-    throw new Error('START IT FIRST MOTHERFUCKER')
-  }
-  console.warn(this + 'send not implemented')
-  return this
-})
 
 /* vim: set expandtab: */
 /* vim: set filetype=javascript ts=2 shiftwidth=2: */

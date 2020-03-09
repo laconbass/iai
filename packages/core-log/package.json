@@ -1,0 +1,23 @@
+{
+  "name": "@iaigz/core-log",
+  "version": "1.0.0",
+  "description": "Logging facility for iai modules",
+  "main": "getter.js",
+  "browser": {
+    "./process.js" : "./window.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "iai",
+    "core",
+    "log"
+  ],
+  "author": "Lorenzo García Rivera",
+  "license": "CC-BY-SA-4.0",
+  "dependencies": {
+    "@iaigz/util-callsite": "file:../util-callsite",
+    "@iaigz/util-ansi": "file:../util-ansi"
+  }
+}

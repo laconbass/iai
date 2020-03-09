@@ -1,17 +1,19 @@
 {
   "name": "@iaigz/gui-electron",
   "description": "This module is intended to interact with the native OS GUI. This uses [electron](url needed), software by [github](url) people.",
-  "version": "0.1.0",
-  "main": "gui.js",
+  "version": "1.0.0",
+  "main": "ElectronGUI.js",
   "scripts": {
     "test": "tape test/*.js | tap-spec"
   },
   "author": "Lorenzo García Rivera",
-  "license": "SEE LICENSE IN README.md",
+  "license": "CC-BY-SA-4.0",
   "dependencies": {
-    "@iaigz/abc-events": "file:../abc-events",
+    "@iaigz/core-log": "file:../core-log",
     "@iaigz/service-ws": "file:../service-ws",
-    "iai-abc": "file:///home/lorenzo/repos/iai/packages/iai-abc",
     "iai-oop": "file:../iai-oop"
+  },
+  "directories": {
+    "test": "test"
   }
 }

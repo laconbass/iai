@@ -1,11 +1,11 @@
 const assert = require('assert')
-const abc = require('iai-abc');
-const log = abc.log;
 
-log.level = log.VERB
-
-const ServiceClient = require('@iaigz/service-ws/ServiceClient')
 const { app, screen, dialog, BrowserWindow } = require('electron')
+const ServiceClient = require('@iaigz/service-ws/ServiceClient')
+
+const Log = require('@iaigz/core-log');
+const log = new Log()
+log.level = log.VERB
 
 // wm will hold the communication service
 log.info('connecting to window manager', process.env.IAI_WM_SERVICE)
@@ -16,6 +16,17 @@ log.info('starting the electron based gui')
 // see https://www.electronjs.org/docs/api/app#app
 app.allowRendererProcessReuse = true
 app
+  // see https://www.electronjs.org/docs/api/app#event-certificate-error
+  .on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+    if (/^(http|ws)s:\/\/127.0.0.1/.test(url)) {
+      log.info('allow invalid certificate for loopback ip (%s)', url)
+      event.preventDefault()
+      callback(true)
+    } else {
+      log.error('invalid certificate for %s', url)
+      callback(false)
+    }
+  })
   .on('will-quit', event => {
     if (wm.connected) {
       log.warn('all windows were closed but manager still connected.')
@@ -89,16 +100,17 @@ wm
           log.warn('window %s (%s) closed', idx)
           win = null
         })
-        //lots of events doesn't work :(
+        //there are lots of events which do not work :(
       ;
       log.verb('new window %s (id %s) %j', idx, win.id, winopts)
-      // setTimeout hack is need to maintain correct positioning
+      // setTimeout hack is need to correct positioning after creation because
+      // created window is "misteryously" moved (see 'move' event) on creation
       // tryed to prevent 'move' event, but it doesn't work and fires lots of times
       setTimeout(() => {
         win.setBounds(winopts)
         win.loadURL('http://' + process.env.IAI_WM_SERVICE + '/')
         resolve(win)
-      }, 20 * event.windows.length)
+      }, event.windows.length > 2 ? 34 * event.windows.length : 100)
     })))
     .then(() => {
       let windows = BrowserWindow.getAllWindows()

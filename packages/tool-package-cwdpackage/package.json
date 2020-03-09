@@ -1,0 +1,16 @@
+{
+  "name": "@iaigz/tool-package-cwdpackage",
+  "version": "1.0.0",
+  "description": "Utility to research which package $PWD/file belongs to",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "iai",
+    "util",
+    "packdata"
+  ],
+  "author": "Lorenzo García Rivera",
+  "license": "CC-BY-SA-4.0"
+}

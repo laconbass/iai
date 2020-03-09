@@ -23,3 +23,7 @@ packages/**/node_modules/*
 abc/iaido/node_modules/*
 
 dojo/db/fixtures/fs/?0*
+
+# package.lock should not be commited at iai repo
+# but allow git to index it to notice its existance during development
+# package-lock.json

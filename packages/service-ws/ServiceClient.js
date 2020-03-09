@@ -1,10 +1,11 @@
 const assert = require('assert')
 const { EventEmitter } = require('events')
 const WebSocket = require('ws')
-const oop = require('iai-oop')
-const abc = require('iai-abc')
-const log = abc.log
 
+const oop = require('iai-oop')
+
+const Log = require('@iaigz/core-log')
+const log = new Log()
 log.level = log.VERB
 
 //

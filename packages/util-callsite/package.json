@@ -1,0 +1,16 @@
+{
+  "name": "@iaigz/util-callsite",
+  "version": "1.0.0",
+  "description": "Utily function to research callsite data for specified function",
+  "main": "backend.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "iai",
+    "util",
+    "callsite"
+  ],
+  "author": "Lorenzo García Rivera",
+  "license": "CC-BY-SA-4.0"
+}

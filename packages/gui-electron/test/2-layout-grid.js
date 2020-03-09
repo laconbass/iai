@@ -1,6 +1,6 @@
 const assert = require('assert')
 
-console.log('TEST node', require.resolve('../'))
+console.log('TEST node', __filename)
 process.on('exit', (code) => console.log('CODE', code))
 
 const ElectronGUI = require('../ElectronGUI')
@@ -77,7 +77,7 @@ new Promise((resolve, reject) => {
 }))
 // grid layout
 .then(client => new Promise((resolve, reject) => {
-  let layout = { horizontal: 3, vertical: 2 }
+  let layout = { horizontal: 9, vertical: 5 }
   let timeout = setTimeout(() => reject('timed out'), 10000)
   let promise = client.layout(layout)
   assert.ok(promise instanceof Promise, 'client#layout() should return a promise')
@@ -87,6 +87,32 @@ new Promise((resolve, reject) => {
       clearTimeout(timeout)
       assert.strictEqual(windows, client.windows, 'fulfilled array should be client.windows')
       let expect = layout.vertical * layout.horizontal
+      assert.strictEqual(windows.length, expect, 'wrong window count')
+      return client
+    })
+    .then(client => new Promise(resolve => setTimeout(() => resolve(client), 500)))
+    .then(client => client.confirm('É correcta a disposición para o layout?\n'
+      + JSON.stringify(layout, null, 2)
+    ))
+    .then(response => {
+      assert.strictEqual(response, true)
+      console.log('PASS layout correct (user confirmation)')
+      resolve(client)//setImmediate(() => resolve(client))
+    })
+    .catch(reject)
+}))
+// partial layout
+.then(client => new Promise((resolve, reject) => {
+  let layout = { horizontal: 3, only: [0, 2]  }
+  let expect = layout.only.length
+  let timeout = setTimeout(() => reject('timed out'), 10000)
+  let promise = client.layout(layout)
+  assert.ok(promise instanceof Promise, 'client#layout() should return a promise')
+  console.log('PASS it returns a promise')
+  promise
+    .then(windows => {
+      clearTimeout(timeout)
+      assert.strictEqual(windows, client.windows, 'fulfilled array should be client.windows')
       assert.strictEqual(windows.length, expect, 'wrong window count')
       return client
     })
@@ -117,6 +143,7 @@ new Promise((resolve, reject) => {
       assert.strictEqual(response, true)
       console.log('PASS window %s ok (user confirmation)', win.id)
     })
+    .then(() => new Promise(resolve => setTimeout(() => resolve(client), 500)))
   })
   sequence.then(() => resolve(client)).catch(reject)
 }))
@@ -140,7 +167,7 @@ new Promise((resolve, reject) => {
 .finally(() => gui.shutdown())
 .finally(() => {
   process.stdin.pause()
-  console.log(`INFO ${require.resolve('../')} test end (stdin paused)`)
+  console.log(`INFO ${__filename} test end (stdin paused)`)
   console.log('INFO If everything went ok, node process should gracefully exit with CODE 0')
 })
 

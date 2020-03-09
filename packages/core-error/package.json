@@ -1,0 +1,17 @@
+{
+  "name": "@iaigz/core-error",
+  "version": "1.0.0",
+  "description": "custom error builder",
+  "main": "Error.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "iai",
+    "core",
+    "custom",
+    "error"
+  ],
+  "author": "Lorenzo García Rivera",
+  "license": "CC-BY-SA-4.0"
+}
