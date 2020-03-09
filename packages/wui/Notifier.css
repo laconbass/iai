@@ -8,22 +8,23 @@
   --light-warn: #fffbd6;
   --dark-info: #0087af;
   --light-info: #dfdffd;
+  --disapear-duration: 1s;
 /* old blue saturado #4db4f6;*/
 }
-p.message {
+.NotifyView p.message {
   background: var(--light-info);
   box-shadow: 0 0 .15em 0 var(--dark-fg);
 }
-p.message::before {
+.NotifyView p.message::before {
   color: var(--light-fg);
   background: var(--dark-info);
 }
-p.message::after { color: var(--light-fg); }
-p.message:hover::after { color: var(--dark-fg); }
-p.message.error { background: var(--light-erro); }
-p.message.error::before { background: var(--dark-erro); }
-p.message.warn { background: var(--light-warn); }
-p.message.warn::before { background: var(--dark-warn); }
+.NotifyView p.message::after { color: var(--light-fg); }
+.NotifyView p.message:hover::after { color: var(--dark-fg); }
+.NotifyView p.message.error { background: var(--light-erro); }
+.NotifyView p.message.error::before { background: var(--dark-erro); }
+.NotifyView p.message.warn { background: var(--light-warn); }
+.NotifyView p.message.warn::before { background: var(--dark-warn); }
 /*
  * Layout disposition
  */
@@ -37,7 +38,7 @@ p.message.warn::before { background: var(--dark-warn); }
   flex-flow: row wrap;
   z-index: 99999999;
 }
-p.message {
+.NotifyView p.message {
   flex: 1 1;
   display: flex;
   flex-flow: row wrap;
@@ -48,24 +49,36 @@ p.message {
   font-family: monospace;
   position:relative;
 }
-p.message::before,
-p.message::after {
+.NotifyView p.message::before,
+.NotifyView p.message::after {
   text-align: center;
   position: absolute;
   width: 1.5em;
   line-height: 1.5em;
   margin: auto 0;
 }
-p.message::before {
+.NotifyView p.message::before {
   content: 'i';
   left: .6em;
   border-radius: 1.5em;
   font-size: .9em;
 }
-p.message.error::before,
-p.message.warn::before { content: '!'; }
-p.message::after {
+.NotifyView p.message.error::before,
+.NotifyView p.message.warn::before { content: '!'; }
+.NotifyView p.message::after {
   content: 'X';
   right: .5em;
 }
-p.message:hover { cursor: pointer; }
+.NotifyView p.message:hover { cursor: pointer; }
+/*
+ * Effects
+ */
+@keyframes fx-disapear {
+  from { opacity: 1; max-width: 100%; }
+  to { opacity: 0; max-width: 0; }
+}
+.NotifyView .fx-disapear {
+  overflow: hidden;
+  animation: fx-disapear var(--disapear-duration) ease 0s 1 normal forwards;
+}
+.NotifyView p.message.fx-disapear::after { color: transparent; }
