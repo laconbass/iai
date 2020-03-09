@@ -1,5 +1,7 @@
 const ui = require('./')
 
+const Menu = require('./ActionMenu')
+
 window.iai = ui
 
 ui
@@ -17,6 +19,8 @@ ui
     ui.stop = () => clearInterval(timer)
 
     // uso de plugins (componentes)
+    ui.plugin('main', new Menu(document.createElement('menu')))
+      .then(() => ui.deploy(ui.main))
   })
   .catch(reason => {
     console.error(reason)

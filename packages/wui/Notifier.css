@@ -29,8 +29,8 @@
  * Layout disposition
  */
 .NotifyView {
-  width: 100%;
-  max-width: 100%;
+  min-width: 10em;
+  max-width: 75%;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -82,3 +82,5 @@
   animation: fx-disapear var(--disapear-duration) ease 0s 1 normal forwards;
 }
 .NotifyView p.message.fx-disapear::after { color: transparent; }
+/* vim: set expandtab: */
+/* vim: set filetype=css ts=2 shiftwidth=2: */

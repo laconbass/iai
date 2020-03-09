@@ -51,7 +51,6 @@ ui.bootstrap = (document) => {
         ui.head.appendChild(link)
         delete link
       }
-      // TODO ui.register notifier
       ui
         .assets(`/node_modules/${pkgname}/fluid-typography.css`)
         .then(() => ui.assets(`/node_modules/${pkgname}/wui.css`) )
