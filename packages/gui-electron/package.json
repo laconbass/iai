@@ -13,6 +13,9 @@
     "@iaigz/service-ws": "file:../service-ws",
     "iai-oop": "file:../iai-oop"
   },
+  "peerDependencies": {
+    "electron": ">= 8"
+  },
   "directories": {
     "test": "test"
   }
