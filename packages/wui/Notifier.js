@@ -10,7 +10,7 @@ exports = module.exports = NotifyView
 function NotifyView (element, opts) {
   assert(this instanceof NotifyView, 'use the new keyword')
   View.call(this, element, {
-    //styles: ['something.css'],
+    styles: ['node_modules/@iaigz/wui/Notifier.css'],
     ...opts
   })
   return this
@@ -21,7 +21,7 @@ NotifyView.prototype.constructor = NotifyView
 
 Array('error', 'warn', 'info').map(className => {
   Object.defineProperty(NotifyView.prototype, className, {
-    get: function (...args) { return (message) => this.message(className, message); }
+    get: function (...args) { return (message) => this.message(className, message) }
   })
 })
 

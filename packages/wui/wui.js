@@ -54,7 +54,7 @@ ui.bootstrap = (document) => {
       // TODO ui.register notifier
       ui
         .assets(`/node_modules/${pkgname}/fluid-typography.css`)
-        .then(() => ui.assets(`/node_modules/${pkgname}/browser.css`) )
+        .then(() => ui.assets(`/node_modules/${pkgname}/wui.css`) )
         .then(() => ui
           .plugin('notify', new Notifier(document.createElement('div')))
         )

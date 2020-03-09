@@ -1,0 +1,73 @@
+/*
+ * Color theme
+ */
+:root {
+  --dark-fg: #777;
+  --light-fg: #ddd;
+  --dark-erro: #d70022;
+  --light-erro: #fdf2f5;
+  --dark-warn: #be9b00;
+  --light-warn: #fffbd6;
+  --dark-info: #0087af;
+  --light-info: #dfdffd;
+/* old blue saturado #4db4f6;*/
+}
+p.message {
+  background: var(--light-info);
+  box-shadow: 0 0 .15em 0 var(--dark-fg);
+}
+p.message::before {
+  color: var(--light-fg);
+  background: var(--dark-info);
+}
+p.message::after { color: var(--light-fg); }
+p.message:hover::after { color: var(--dark-fg); }
+p.message.error { background: var(--light-erro); }
+p.message.error::before { background: var(--dark-erro); }
+p.message.warn { background: var(--light-warn); }
+p.message.warn::before { background: var(--dark-warn); }
+/*
+ * Layout disposition
+ */
+.NotifyView {
+  width: 100%;
+  max-width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-flow: row wrap;
+  z-index: 99999999;
+}
+p.message {
+  flex: 1 1;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  margin: .4em;
+  padding: .5em 2.5em;
+  border-radius: .2em;
+  font-family: monospace;
+  position:relative;
+}
+p.message::before,
+p.message::after {
+  text-align: center;
+  position: absolute;
+  width: 1.5em;
+  line-height: 1.5em;
+  margin: auto 0;
+}
+p.message::before {
+  content: 'i';
+  left: .6em;
+  border-radius: 1.5em;
+  font-size: .9em;
+}
+p.message.error::before,
+p.message.warn::before { content: '!'; }
+p.message::after {
+  content: 'X';
+  right: .5em;
+}
+p.message:hover { cursor: pointer; }
