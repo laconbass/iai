@@ -2,8 +2,6 @@
  * Color theme
  */
 :root {
-  --dark-fg: #777;
-  --light-fg: #ddd;
   --dark-erro: #d70022;
   --light-erro: #fdf2f5;
   --dark-warn: #be9b00;
