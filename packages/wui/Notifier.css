@@ -74,12 +74,12 @@
  * Effects
  */
 @keyframes fx-disapear {
-  from { opacity: 1; max-width: 100%; }
-  to { opacity: 0; max-width: 0; }
+  from { transform: translateY(0); color: currentColor; }
+  to { transform: translateY(100%); color: transparent; }
 }
-.NotifyView .fx-disapear {
+.NotifyView p.fx-disapear {
   overflow: hidden;
-  animation: fx-disapear var(--disapear-duration) ease 0s 1 normal forwards;
+  animation: fx-disapear var(--disapear-duration) ease 0s 1 normal both;
 }
 .NotifyView p.message.fx-disapear::after { color: transparent; }
 /* vim: set expandtab: */
