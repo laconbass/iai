@@ -1,4 +1,54 @@
 /*
+ * Layout disposition
+ * TODO: grid may fit better
+ */
+.NotifyView {
+  z-index: 99999999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  max-width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+}
+.NotifyView p.message {
+  flex: 1 0;
+  width: min-content;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  margin: .4rem;
+  padding: .5em 2.5em;
+  border-radius: .2em;
+  text-align: center;
+  font-family: monospace;
+  position: relative;
+}
+.NotifyView p.message:last-of-type {
+}
+.NotifyView p.message::before,
+.NotifyView p.message::after {
+  text-align: center;
+  position: absolute;
+  width: 1.5rem;
+  line-height: 1.5rem;
+  margin: auto 0;
+}
+.NotifyView p.message::before {
+  content: 'i';
+  left: .6rem;
+  border-radius: 1.5rem;
+  font-size: .9em;
+}
+.NotifyView p.message.error::before,
+.NotifyView p.message.warn::before { content: '!'; }
+.NotifyView p.message::after {
+  content: 'X';
+  right: .3rem;
+}
+.NotifyView p.message:hover { cursor: pointer; }
+/*
  * Color theme
  */
 :root {
@@ -8,8 +58,9 @@
   --light-warn: #fffbd6;
   --dark-info: #0087af;
   --light-info: #dfdffd;
-  --disapear-duration: 1s;
 /* old blue saturado #4db4f6;*/
+
+  --disapear-duration: 1s;
 }
 .NotifyView p.message {
   background: var(--light-info);
@@ -25,54 +76,6 @@
 .NotifyView p.message.error::before { background: var(--dark-erro); }
 .NotifyView p.message.warn { background: var(--light-warn); }
 .NotifyView p.message.warn::before { background: var(--dark-warn); }
-/*
- * Layout disposition
- */
-.NotifyView {
-  z-index: 99999999;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  max-width: 100%;
-  display: flex;
-  flex-flow: row wrap;
-}
-.NotifyView p.message {
-  flex: 1 0;
-  display: flex;
-  flex-flow: row wrap;
-  align-items: center;
-  margin: .4em;
-  padding: .5em 2.5em;
-  border-radius: .2em;
-  text-align: center;
-  font-family: monospace;
-  position: relative;
-}
-.NotifyView p.message:last-of-type {
-}
-.NotifyView p.message::before,
-.NotifyView p.message::after {
-  text-align: center;
-  position: absolute;
-  width: 1.5em;
-  line-height: 1.5em;
-  margin: auto 0;
-}
-.NotifyView p.message::before {
-  content: 'i';
-  left: .6em;
-  border-radius: 1.5em;
-  font-size: .9em;
-}
-.NotifyView p.message.error::before,
-.NotifyView p.message.warn::before { content: '!'; }
-.NotifyView p.message::after {
-  content: 'X';
-  right: .5em;
-}
-.NotifyView p.message:hover { cursor: pointer; }
 /*
  * Effects
  */
