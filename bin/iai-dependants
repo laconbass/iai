@@ -29,7 +29,6 @@ console.error('researching %s dependencies...', modpath)
 
 try {
   modpath = require.resolve(modpath)
-  mod = require(modpath)
 } catch( err ){
   if( err.code === 'MODULE_NOT_FOUND' ){
     if(!~err.message.indexOf(modpath)){
@@ -43,6 +42,7 @@ try {
   }
   throw err;
 }
+mod = require(modpath)
 var t = Date.now()
 var result = sources(require.cache[modpath])
 t = Date.now() - t
