@@ -1,4 +1,3 @@
-const $ = require('jquery')
 const assert = require('assert')
 
 // ActionMenu builder
@@ -26,7 +25,6 @@ const constructor = prototype.constructor = function ActionMenu (opts) {
   this.buttons = opts.buttons
   let fragment = this.createFragment()
   this.buttons.forEach((button, idx) => {
-    console.log(button)
     assert(button instanceof constructor.Button, `value at position ${idx} is not a Button instance`)
     fragment.appendChild(button.$)
   })
@@ -47,7 +45,7 @@ prototype.render = function (ui) {
 module.exports = prototype.constructor
 module.exports.prototype = prototype
 
-// Button prototype
+// Button builder
 
 
 constructor.Button = function Button (opts) {
@@ -69,13 +67,12 @@ constructor.Button.prototype = Object.create(parent.prototype)
 constructor.Button.prototype.constructor = constructor.Button
 
 constructor.Button.prototype.ready = function (ui) {
-  console.log(ui)
   console.log(this + ' is ready')
   ui.observe(this)
     .on('click', event => this.action())
 }
 
-// trigger button
+// Trigger Button builder
 
 constructor.Trigger = function TriggerButton (opts) {
   assert(this instanceof constructor.Trigger, 'use the new keyword')
@@ -96,6 +93,7 @@ constructor.Toggler = function TogglerButton (opts = {}) {
     get: () => enabled,
     set: bool => {
       assert('boolean' == typeof bool)
+      throw new Error('missing implementation')
     }
   })
   console.log('fuck',this)

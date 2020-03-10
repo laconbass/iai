@@ -1,0 +1,71 @@
+.HeaderMenu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+}
+body > section.Section:first-of-type {
+  margin-top: 2.5em;
+}
+.HeaderMenu > * {
+  display: inline-block;
+  flex: 1;
+}
+.HeaderMenu img.logo {
+  flex: 0;
+  margin-left: .5em;
+}
+.HeaderMenu img.logo:not([src]) {
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  border: 1em solid;
+  border-radius: 1em;
+  border-color: transparent var(--dark-bg) transparent var(--dark-bg);
+  animation: rotate 2s linear infinite;
+}
+.HeaderMenu nav {
+  display: flex;
+  align-items: center;
+}
+.HeaderMenu nav li {
+  list-style-type: none;
+  flex: 1;
+  margin-left: .5em;
+  background-color: var(--press-fg);
+  background-image: var(--noise-bg);
+  box-shadow: 0 .1em .4em 0 var(--press-bg);
+}
+.HeaderMenu nav li a {
+  display: block;
+  line-height: var(--workarea-bottom);
+  max-height: var(--workarea-bottom);
+  overflow: hidden;
+}
+.HeaderMenu nav li,
+.HeaderMenu nav li a {
+  text-align: center;
+  text-decoration: none;
+  color: var(--press-bg);
+}
+.HeaderMenu nav li.selected {
+  background-color: var(--press-bg);
+  box-shadow: 0 .1em .2em 0 var(--press-bg);
+}
+.HeaderMenu nav li.selected,
+.HeaderMenu nav li.selected a {
+  color: var(--press-fg);
+}
+.HeaderMenu nav li {
+  transition: all .5s ease;
+}
+.HeaderMenu nav li:hover:not(.selected) {
+  box-shadow: 0 .1em .8em 0 var(--press-bg);
+  transform: translateY(-.05em);
+}
+
+/* vim: set expandtab: */
+/* vim: set filetype=css ts=2 shiftwidth=2: */

@@ -13,12 +13,29 @@ function View (tag, opts = {}) {
 View.prototype = Object.create(parent.prototype)
 View.prototype.constructor = View
 
-// static method allowing View constructor to have a default document source
-// this is the reason why this constructor depends on iai-ui singleton
+
+// HTML TEMPLATE INTERFACE
+// this is the reason why this constructor depends on wui singleton
+
+// this method allows View constructor to have a default document source
 View.createElement = (tag, document = ui.$doc ) => {
   assert('string' == typeof tag)
   assert(document instanceof HTMLDocument, 'ui is not initialized')
   return document.createElement(tag)
+}
+
+// returns a DocumentFragment containing specified string templates as DOM nodes
+View.prototype.template = function (...args) {
+  // let's create an off-DOM element to parse the HTML strings
+  let tmp = View.createElement('div')
+  tmp.innerHTML = args.join('\n')
+  // now create an new document fragment
+  let fragment = tmp.ownerDocument.createDocumentFragment()
+  // and move each DOM node from tmp div to fragment
+  while (tmp.firstChild) {
+    fragment.appendChild(tmp.firstChild)
+  }
+  return fragment
 }
 
 // INJECTION INTERFACE

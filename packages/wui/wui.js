@@ -106,6 +106,14 @@ ui.get = (...args) => new Promise( (resolve, reject) => {
 
 ui.fetch = (url) => window.fetch(url)
 
+ui.plugins = (plugins) => {
+  return Promise.all(
+    Object
+    .keys(plugins)
+    .map(id => ui.plugin(id, plugins[id]).then(ui => ui.deploy(plugins[id])))
+  )
+}
+
 ui.plugin = (id, view) => {
   try {
     assert(ui.$doc instanceof HTMLDocument, 'ui is not initialized')

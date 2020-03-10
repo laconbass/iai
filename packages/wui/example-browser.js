@@ -1,6 +1,7 @@
 const ui = require('./')
 
-const Menu = require('./ActionMenu')
+const ActionMenu = require('./ActionMenu')
+const HeaderMenu = require('./HeaderMenu')
 
 window.iai = ui
 
@@ -19,25 +20,32 @@ ui
     ui.stop = () => clearInterval(timer)
 
     // uso de plugins (componentes)
-    console.log(new Menu.Button())
-    console.log(new Menu.Toggler())
-    console.log(new Menu.Trigger())
-    return ui
-      .plugin('menu', new Menu([
-        new Menu.Toggler({
-          text: 'toggle',
-          action: () => ui.toggle(),
+    return ui.plugins({
+      'tablist':  new HeaderMenu([
+        new HeaderMenu.Section({
+          slug: 'tab1',
+          text: 'Primeira',
         }),
-        new Menu.Trigger({
-          text: 'start',
-          action: () => ui.start(),
+        new HeaderMenu.Section({
+          slug: 'tab2',
+          text: 'Segunda'
         }),
-        new Menu.Trigger({
-          text: 'stop',
-          action: () => ui.stop(),
+        new HeaderMenu.Section({
+          slug: 'tab3',
+          text: 'Terceira'
         }),
-      ]))
-      .then(() => ui.deploy(ui.menu))
+      ]),
+      'actions': new ActionMenu([
+        new ActionMenu.Trigger({
+          text: 'pral',
+          action: () => ui.notify.info('este botón non fai nada'),
+        }),
+        new ActionMenu.Trigger({
+          text: 'sec',
+          action: () => ui.notify.info('este botón tampouco fai nada'),
+        }),
+      ])
+    })
   })
 /*  .catch(reason => {
     console.error(reason)
