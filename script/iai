@@ -238,7 +238,7 @@ function iai-repo () {
 # `iai view` standarizes the way to invoke a file content viewer
 ##
 function iai-tree () {
-  tree -L 2  --dirsfirst --sort=name --noreport -C --filelimit 20 "$@"\
+  tree -L 2  --dirsfirst --sort=name --noreport -C --filelimit 60 "$@"\
      | iai-pager || exit 1
 }
 function iai-ls () {
