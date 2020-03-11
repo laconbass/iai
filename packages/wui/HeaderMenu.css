@@ -43,6 +43,7 @@ body > section.Section:first-of-type {
   display: block;
   line-height: var(--workarea-bottom);
   max-height: var(--workarea-bottom);
+  min-height: var(--workarea-bottom);
   overflow: hidden;
 }
 .HeaderMenu nav li,

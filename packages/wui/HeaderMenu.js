@@ -33,7 +33,14 @@ const constructor = prototype.constructor = function HeaderMenu (opts) {
   this.sections = opts.sections
   this.sections.forEach((section, idx) => {
     assert(section instanceof constructor.Section, `value at position ${idx} is not a Section instance`)
-    let item = this.template(`<li><a href="#/${section.slug}">${section.text}</a></li>`)
+    let item = this.template(
+      `<li>`,
+      `  <a href="#/${section.slug}">`,
+      section.icon ? `<i class="icofont-${section.icon}"></i>` : '',
+      section.text ? `${section.text}` : '',
+      `  </a>`,
+      `</li>`
+    )
     this.$menu.appendChild(item)
   })
   this.$.appendChild(fragment)
@@ -45,10 +52,11 @@ prototype.ready = function (ui) {
   console.log(this + 'is ready')
   ui.query(this.$menu)
     .on('click', event => {
-      event = event.originalEvent
-      if (event.target.tagName !== 'A') return
+      let target = event.originalEvent.target
+      if (target.tagName === 'I') target = target.parentNode
+      if (target.tagName !== 'A') return
       for (let li of this.$menu.childNodes) {
-        let action = li.firstChild === event.target ? 'add' : 'remove'
+        let action = li.firstElementChild === target ? 'add' : 'remove'
         li.classList[action]('selected')
       }
     })
@@ -68,18 +76,21 @@ constructor.Section = function Section (opts = {}) {
   assert(this instanceof Section, 'use the new keyword')
 
   opts = {
+    slug: null,
+    icon: null,
+    text: null,
     ...opts,
-    text: opts.text || opts.slug
   }
 
   assert(opts.slug, 'Section instances must specify a slug')
-  assert(opts.slug, 'Section instances must specify a text')
+  if (!opts.icon && !opts.text) opts.text = opts.slug
 
   parent.call(this, 'section', opts)
 
   Object.defineProperties(this, {
     slug: { value: opts.slug, enumerable: true },
-    text: { value: opts.text, enumerable: true }
+    icon: { value: opts.icon, enumerable: true },
+    text: { value: opts.text, enumerable: true },
   })
 
   return this
