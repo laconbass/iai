@@ -24,24 +24,29 @@ ui
       'tablist':  new HeaderMenu([
         new HeaderMenu.Section({
           slug: 'tab1',
-          text: 'Primeira',
+          text: "datos",
+          icon: 'sign-in',
         }),
         new HeaderMenu.Section({
           slug: 'tab2',
-          text: 'Segunda'
+          icon: 'paperclip',
         }),
         new HeaderMenu.Section({
           slug: 'tab3',
-          text: 'Terceira'
+          icon: 'penguin-linux',
         }),
       ]),
       'actions': new ActionMenu([
         new ActionMenu.Trigger({
-          text: 'pral',
+          icon: 'search-user',
           action: () => ui.notify.info('este botón non fai nada'),
         }),
         new ActionMenu.Trigger({
-          text: 'sec',
+          icon: 'plus',
+          action: () => ui.notify.info('este botón tampouco fai nada'),
+        }),
+        new ActionMenu.Toggler({
+          icon: 'map-pins',
           action: () => ui.notify.info('este botón tampouco fai nada'),
         }),
       ])
