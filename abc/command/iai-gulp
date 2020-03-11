@@ -1,0 +1,9 @@
+assert_function iai || exit
+
+function iai-gulp () {
+	"$(iai nbin gulp)" "$@"
+}
+
+##
+# vim modeline
+# /* vim: set filetype=sh ts=2 shiftwidth=2: */
