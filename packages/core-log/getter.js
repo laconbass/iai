@@ -7,3 +7,5 @@ const globals = require('./process')
 module.exports = function newLog() {
   return Log.constructor(newLog)
 }
+
+module.exports.bindings = globals

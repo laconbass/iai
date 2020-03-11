@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-$(iai nbin budo) ${1:-example-browser.js} \
-  --dir "$(iai root)/packages" \
-  --live \
-  --watch-glob '*.{js,css,json}' \
-  --ssl

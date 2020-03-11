@@ -29,8 +29,8 @@ function bundler (b) {
     .pipe(buffer()) // buffer is needed by gulp-sourcemaps
     // load maps from browserify bundle TODO may using exorcist be simpler?
     .pipe(sourcemaps.init({ loadMaps: true }))
-    .pipe(sourcemaps.write('./')) // write .map file
-    .pipe(gulp.dest('./www/js')) // save built files to this directory
+    .pipe(sourcemaps.write('.')) // write .map file
+    .pipe(gulp.dest('.')) // save built files to this directory
 }
 
 bundler.options = {
@@ -51,6 +51,8 @@ exports.build = function () {
     .on('error', err => log.fatal(1, err.stack))
   return bundler(b)
 }
+
+exports.default = exports.build
 
 // this should be the same as browserify task, but with watchify
 exports.watchify = function () {

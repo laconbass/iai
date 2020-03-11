@@ -1,0 +1,27 @@
+{
+  "name": "@iaigz/wui-example",
+  "version": "1.0.0",
+  "description": "example on how to use @iaigz/wui and  @iaigz/gui-electron",
+  "main": "backend.js",
+  "scripts": {
+    "build":"iai gulp build",
+    "watch":"iai gulp watchify",
+    "start":"node backend.js",
+    "devel": "echo \"To be implemented\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "iagz",
+    "iai",
+    "wui",
+    "example",
+    "gui",
+    "gui-electron"
+  ],
+  "author": "Lorenzo García Rivera",
+  "license": "CC-BY-SA-4.0",
+  "dependencies": {
+    "@iaigz/gui-electron": "file:../../gui-electron",
+    "@iaigz/wui": "file:.."
+  }
+}

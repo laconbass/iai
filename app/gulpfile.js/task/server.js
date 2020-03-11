@@ -1,6 +1,7 @@
 const api = require('iai-api')
 
-const log = api.log
+const Log = require('@iaigz/core-log')
+const log = new Log()
 log.level = log.VERB
 
 const Job = require('../lib/Job')

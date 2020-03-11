@@ -1,7 +1,7 @@
-const ui = require('./')
+const ui = require('@iaigz/wui')
 
-const ActionMenu = require('./ActionMenu')
-const HeaderMenu = require('./HeaderMenu')
+const ActionMenu = require('@iaigz/wui/ActionMenu')
+const HeaderMenu = require('@iaigz/wui/HeaderMenu')
 
 window.iai = ui
 
