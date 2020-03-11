@@ -8,36 +8,55 @@
   display: flex;
   flex-flow: column-reverse wrap;
 }
+.ActionMenu {
+  --size-factor: 2.5em;
+}
 .ActionMenu button {
-  flex-basis: 5em;
-  display: inline-block;
-  width: 5em;
-  max-width: 5em;
-  height: 5em;
-  max-height: 5em;
-  margin: .5em auto;
+  margin: .5rem auto;
   border: none;
-  border-radius: 10em;
+  border-radius: var(--size-factor);
+  width: var(--size-factor);
+  height: var(--size-factor);
+  max-width: var(--size-factor);
+  max-height: var(--size-factor);
+  flex-basis: var(--size-factor);
   color: var(--dark-fg);
   background-color: var(--press-fg);
   background-image: var(--noise-bg);
-  box-shadow: 0 .1em .5em 0;
+  box-shadow: 0 .1rem .5rem 0 var(--press-bg);
   transition: all .5s ease;
+  cursor: pointer;
+  font-size: 1.1em;
 }
 .ActionMenu button:first-child {
-  font-size: 1.2em;
-  margin-bottom: .8em;
+  font-size: 2em;
+  margin-bottom: .8rem;
 }
-.ActionMenu button:hover {
-  cursor: pointer;
-  /*transform: scale(1.1);*/
-  /*color: var(--light-fg);
-  background-color: var(--dark-fg);*/
-  box-shadow: 0 .1em .8em 0;
+.ActionMenu button:focus {
+  outline: none;
+  box-shadow: 0 0 0 .1rem var(--press-fg)
+  , 0 .1rem .5rem 0 var(--press-bg)
+  ;
 }
-.ActionMenu button:active {
-  /*transform: scale(1);*/
-  box-shadow: 0 .1em .3em 0;
+.ActionMenu button:hover:not(:active):not(.selected) {
+  box-shadow: 0 .1rem .8rem 0 var(--press-bg);
+}
+.ActionMenu button:hover:not(:active):not(.selected):focus {
+  box-shadow: 0 0 0 .1rem var(--press-fg)
+  , 0 .1rem .8rem 0 var(--press-bg)
+  ;
+}
+.ActionMenu button:active,
+.ActionMenu button.selected {
+  color: var(--press-fg);
+  background-color: var(--press-bg);
+  box-shadow: 0 .1rem .3rem 0 var(--press-bg);
+}
+.ActionMenu button:active:focus,
+.ActionMenu button.selected:focus {
+  box-shadow: 0 0 0 .1rem var(--press-fg)
+  , 0 .1rem .3rem 0 var(--press-bg)
+  ;
 }
 /* vim: set expandtab: */
 /* vim: set filetype=css ts=2 shiftwidth=2: */

@@ -18,14 +18,19 @@ const constructor = prototype.constructor = function ActionMenu (opts) {
   }
 
   parent.call(this, 'menu', {
-    styles: ['node_modules/@iaigz/wui/ActionMenu.css'],
+    styles: [
+      'node_modules/@iaigz/wui/ActionMenu.css',
+      'node_modules/@iaigz/wui/icofont/icofont-search/icofont.min.css',
+      'node_modules/@iaigz/wui/icofont/icofont-webapp/icofont.min.css',
+    ],
     ...opts
   })
 
   this.buttons = opts.buttons
   let fragment = this.createFragment()
   this.buttons.forEach((button, idx) => {
-    assert(button instanceof constructor.Button, `value at position ${idx} is not a Button instance`)
+    assert(button instanceof constructor.Button, 
+      `value at position ${idx} is not a Button instance`)
     fragment.appendChild(button.$)
   })
   this.$.appendChild(fragment)
@@ -53,13 +58,19 @@ constructor.Button = function Button (opts) {
 
   if ('function' == typeof opts)  opts = { action: opts }
 
-  opts = { text: null, action: event => false, ...opts  }
+  opts = {
+    text: null,
+    icon: null,
+    action: () => null,
+    ...opts
+  }
 
   parent.call(this, 'button', opts)
 
-  this.action = opts.action
-
-  this.render(opts.text)
+  Object.defineProperties(this, {
+    options: { value: opts },
+    action: { get: () => opts.action }
+  })
 
   return this
 }
@@ -70,13 +81,26 @@ constructor.Button.prototype.ready = function (ui) {
   console.log(this + ' is ready')
   ui.observe(this)
     .on('click', event => this.action())
+
+  this.render()
+}
+
+constructor.Button.prototype.render = function (opts = this.options) {
+  let fragment = this.template(
+    opts.icon ? `<i class="icofont-${opts.icon}"></i>`: '',
+    opts.text ? opts.text : ''
+  )
+  return parent.prototype.render.call(this, fragment)
 }
 
 // Trigger Button builder
 
 constructor.Trigger = function TriggerButton (opts) {
   assert(this instanceof constructor.Trigger, 'use the new keyword')
-  constructor.Button.call(this, { text: 'trigger', ...opts, })
+  constructor.Button.call(this, {
+    icon: 'verification-check',
+    ...opts,
+  })
   return this
 }
 constructor.Trigger.prototype = Object.create(constructor.Button.prototype)
@@ -86,17 +110,22 @@ constructor.Trigger.prototype.constructor = constructor.Trigger
 constructor.Toggler = function TogglerButton (opts = {}) {
   assert(this instanceof constructor.Toggler, 'use the new keyword')
 
-  constructor.Button.call(this, { text: 'toggler', ...opts, })
-
-  let enabled = !! opts.initial
-  Object.defineProperty(this, 'enabled', {
+  let enabled = !! opts.selected
+  Object.defineProperty(this, 'selected', {
     get: () => enabled,
     set: bool => {
       assert('boolean' == typeof bool)
-      throw new Error('missing implementation')
+      if (bool !== enabled) this.$.classList.toggle('selected')
     }
   })
-  console.log('fuck',this)
+
+  constructor.Button.call(this, {
+    ...opts,
+    action: () => {
+      this.selected = !this.selected
+      opts.action(this.selected)
+    }
+  })
 
   return this
 
