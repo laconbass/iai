@@ -22,16 +22,16 @@ ui
     // uso de plugins (componentes)
     return ui.plugins({
       'tablist':  new HeaderMenu([
-        new HeaderMenu.Section({
+        new ui.Section({
           slug: 'tab1',
           text: "datos",
           icon: 'sign-in',
         }),
-        new HeaderMenu.Section({
+        new ui.Section({
           slug: 'tab2',
           icon: 'paperclip',
         }),
-        new HeaderMenu.Section({
+        new ui.Section({
           slug: 'tab3',
           icon: 'penguin-linux',
         }),

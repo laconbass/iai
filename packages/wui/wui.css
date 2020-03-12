@@ -4,6 +4,7 @@ body { margin: 0; min-height: 100%; }
  * Base disposition
  */
 :root {
+  --workarea-top: 8em;
   --workarea-bottom: 2.5em;
 }
 body {
@@ -14,6 +15,36 @@ body {
 body > * {
   flex: 1 1 100%;
   max-width: 600px;
+}
+body > main {
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+}
+body > main > section {
+  display: none;
+  margin: var(--workarea-top) 6em var(--workarea-bottom) 1.5em;
+}
+body > main > section.loading::before {
+  content: 'loading'
+}
+body > main > section.loading,
+body > main > section.selected {
+  display: block;
+}
+body > main > section {
+  font-family: Sans-serif;
+}
+body > main > section h1,
+body > main > section h2,
+body > main > section h3,
+body > main > section h4,
+body > main > section h5,
+body > main > section h6 {
+  font-family: Arial, Verdana;
+}
+body > main > section p {
+  text-align: justify;
 }
 /*
  * Loading overlay

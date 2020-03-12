@@ -3,6 +3,7 @@ const assert = require('assert')
 // HeaderMenu builder
 
 const parent = require('./View')
+const Section = require('./Section')
 
 const prototype = Object.create(parent.prototype)
 const constructor = prototype.constructor = function HeaderMenu (opts) {
@@ -32,10 +33,10 @@ const constructor = prototype.constructor = function HeaderMenu (opts) {
 
   this.sections = opts.sections
   this.sections.forEach((section, idx) => {
-    assert(section instanceof constructor.Section, `value at position ${idx} is not a Section instance`)
+    assert(section instanceof Section, `value at position ${idx} is not a Section instance`)
     let item = this.template(
       `<li>`,
-      `  <a href="#/${section.slug}">`,
+      `  <a href="/${section.slug}">`,
       section.icon ? `<i class="icofont-${section.icon}"></i>` : '',
       section.text ? `${section.text}` : '',
       `  </a>`,
@@ -49,7 +50,6 @@ const constructor = prototype.constructor = function HeaderMenu (opts) {
 }
 
 prototype.ready = function (ui) {
-  console.log(this + 'is ready')
   ui.query(this.$menu)
     .on('click', event => {
       let target = event.originalEvent.target
@@ -59,6 +59,9 @@ prototype.ready = function (ui) {
         let action = li.firstElementChild === target ? 'add' : 'remove'
         li.classList[action]('selected')
       }
+      event.preventDefault()
+      event.stopPropagation()
+      ui.navigate(target)
     })
 }
 
@@ -68,40 +71,6 @@ prototype.render = function (ui) {
 
 module.exports = prototype.constructor
 module.exports.prototype = prototype
-
-
-// Section builder
-
-constructor.Section = function Section (opts = {}) {
-  assert(this instanceof Section, 'use the new keyword')
-
-  opts = {
-    slug: null,
-    icon: null,
-    text: null,
-    ...opts,
-  }
-
-  assert(opts.slug, 'Section instances must specify a slug')
-  if (!opts.icon && !opts.text) opts.text = opts.slug
-
-  parent.call(this, 'section', opts)
-
-  Object.defineProperties(this, {
-    slug: { value: opts.slug, enumerable: true },
-    icon: { value: opts.icon, enumerable: true },
-    text: { value: opts.text, enumerable: true },
-  })
-
-  return this
-}
-
-constructor.Section.prototype.ready = function (ui) {
-  console.log(this + ' is ready')
-}
-
-constructor.Section.prototype = Object.create(parent.prototype)
-constructor.Section.prototype.constructor = constructor.Section
 
 
 /* vim: set expandtab: */

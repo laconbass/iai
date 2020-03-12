@@ -10,9 +10,15 @@ let assets = [
   '/bundle.js.map',
 ]
 
+let sections = {
+  '/tab1': 'content/example.html',
+  '/tab2': 'content/example2.html',
+  '/tab3': 'content/example.html',
+}
+
 gui
   .on('client:created', client => client.layout({
-    horizontal: 3, only: 1
+    horizontal: 2, only: 0
   }))
   .on('request', (req, res) => {
     // this logic implements a basic assets server
@@ -24,6 +30,11 @@ gui
       default:
         if (assets.indexOf(req.url) > -1) {
           fs.createReadStream(`${__dirname}${req.url}`)
+            .pipe(res)
+          return
+        }
+        if (sections[req.url]) {
+          fs.createReadStream(`${__dirname}/${sections[req.url]}`)
             .pipe(res)
           return
         }

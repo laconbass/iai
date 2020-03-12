@@ -24,6 +24,8 @@ function bundler (b) {
   //   outputs: ['bundle/x', 'bundle/y']
   // })
   return b.bundle()
+    // catch out browserify/watchify errors
+    .on('error', err => log.fatal(1, err.stack))
     // build name here avoids renaming downstream
     .pipe(source('bundle.js')) // convert to a vinyl-source-stream
     .pipe(buffer()) // buffer is needed by gulp-sourcemaps
@@ -46,15 +48,13 @@ bundler.options = {
 
 
 exports.build = function () {
-  var b = browserify(bundler.options)
-    // catch out browserify errors
-    .on('error', err => log.fatal(1, err.stack))
-  return bundler(b)
+  return bundler(browserify(bundler.options))
 }
 
 exports.default = exports.build
 
 // this should be the same as browserify task, but with watchify
+// TODO actually error handling is not working as it should
 exports.watchify = function () {
   var opts = { ...bundler.options, ...watchify.args }
   const b = watchify(browserify(opts))
