@@ -6,9 +6,18 @@
   max-width: 100%;
   display: flex;
   align-items: center;
+  background-color: var(--light-fg);
+  background-image: var(--noise-bg);
+  border-top: .3rem solid var(--press-bg);
 }
-body > section.Section:first-of-type {
-  margin-top: 2.5em;
+.HeaderMenu:before {
+  content: '';
+  position: absolute;
+  top: -.3rem;
+  width: 100%;
+  height: .3rem;
+  background-image: var(--noise-bg);
+  box-shadow: 0 .1rem .5rem 0 var(--press-bg);
 }
 .HeaderMenu > * {
   display: inline-block;
@@ -55,6 +64,7 @@ body > section.Section:first-of-type {
 .HeaderMenu nav li.selected {
   background-color: var(--press-bg);
   box-shadow: 0 .1em .2em 0 var(--press-bg);
+  z-index: 9;
 }
 .HeaderMenu nav li.selected,
 .HeaderMenu nav li.selected a {
@@ -65,7 +75,7 @@ body > section.Section:first-of-type {
 }
 .HeaderMenu nav li:hover:not(.selected) {
   box-shadow: 0 .1em .8em 0 var(--press-bg);
-  transform: translateY(-.05em);
+  transform: translateY(-.05rem);
 }
 
 /* vim: set expandtab: */

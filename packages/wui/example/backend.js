@@ -3,6 +3,14 @@ const GUI = require('@iaigz/gui-electron')
 const os = require('os')
 const fs = require('fs')
 
+// default layout: 2 horizontal windows, only the first (left)
+let layout = { horizontal: 2, only: 0 }
+try {
+  layout = require(process.env.HOME +'/.iai-layout.json')
+} catch (e) {
+  // just use default layout
+}
+
 let gui = new GUI()
 
 let assets = [
@@ -17,9 +25,7 @@ let sections = {
 }
 
 gui
-  .on('client:created', client => client.layout({
-    horizontal: 2, only: 0
-  }))
+  .on('client:created', client => client.layout(layout))
   .on('request', (req, res) => {
     // this logic implements a basic assets server
     switch (req.url) {

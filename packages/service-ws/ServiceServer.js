@@ -7,7 +7,7 @@ const oop = require('iai-oop')
 
 const Log = require('@iaigz/core-log')
 const log = new Log()
-log.level = log.VERB
+log.level = log.INFO
 
 //
 // exports: a builder (aka constructor)

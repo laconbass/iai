@@ -3,7 +3,7 @@
   padding: 0;
   position: fixed;
   bottom: var(--workarea-bottom);
-  right: .8em;
+  right: .5rem;
   max-width: 25%;
   display: flex;
   flex-flow: column-reverse wrap;
