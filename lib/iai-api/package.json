@@ -5,10 +5,9 @@
   "main": "./backend.js",
   "browser": "./browser.js",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
     "iai-abc": "*"
   },
-  "scripts": {
-  },
-  "devDependencies": {
-  }
+  "scripts": {},
+  "devDependencies": {}
 }

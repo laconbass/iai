@@ -19,7 +19,7 @@ var exports = oop(module.exports)
 exports.lazyload('is', require, 'iai-is')
 
 exports.accessor('log', function getLog () {
-  return iai.Log.constructor(getLog)
+  return new module.exports.Log(getLog)
 })
 
 // "error" namespace is reserved for the custom error toolset
