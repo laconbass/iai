@@ -13,6 +13,7 @@
   "author": "Lorenzo García Rivera",
   "license": "SEE LICENSE IN README.md",
   "dependencies": {
+    "@iaigz/core-log": "file:../core-log",
     "bufferutil": "^4.0.1",
     "iai-oop": "file:../iai-oop",
     "utf-8-validate": "^5.0.2",

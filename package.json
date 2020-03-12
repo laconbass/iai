@@ -15,6 +15,13 @@
   "dependencies": {
     "@iaigz/tool-package-cwdpackage": "file:./packages/tool-package-cwdpackage",
     "@iaigz/tool-package-sources": "file:./packages/tool-package-sources",
-    "budo": "^11.6.3"
+    "budo": "^11.6.3",
+    "gulp": "^4.0.2",
+    "gulp-sourcemaps": "^2.6.5",
+    "iai-abc": "file:./packages/iai-abc",
+    "iai-api": "file:./lib/iai-api",
+    "iai-oop": "file:./packages/iai-oop",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
   }
 }
