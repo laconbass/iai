@@ -8,7 +8,7 @@ gui
   .on('client:created', client => client.layout({ horizontal: 3, only: 2 }))
   .on('request', (req, res) => {
     console.warn('received request')
-    fs.createReadStream(__dirname + '/backend.html')
+    fs.createReadStream(__dirname + '/example.html')
       .pipe(res)
   })
   .bootstrap()

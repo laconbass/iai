@@ -45,7 +45,7 @@ app
       y: y + Math.floor((height - geometry.height) / 2), // centro vertical
       focusable: false, kiosk: true,
     })
-    win.loadFile('backend.html')
+    win.loadFile('example.html')
     return wm//.once('connected' => win.close())
   })) */
 
