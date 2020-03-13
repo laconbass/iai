@@ -13,6 +13,8 @@ Object.defineProperty(ui, '$doc', { value: null, writable: true })
 Object.defineProperty(ui, 'head', { value: null, writable: true })
 Object.defineProperty(ui, 'body', { value: null, writable: true })
 
+// TODO backend support. see https://github.com/lukechilds/window
+
 ui.bootstrap = (document) => {
   if (ui.$doc instanceof HTMLDocument) {
     return Promise.resolve(ui)
