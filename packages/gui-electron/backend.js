@@ -11,7 +11,6 @@ log.level = log.VERB
 log.info('connecting to window manager', process.env.IAI_WM_SERVICE)
 let wm = new ServiceClient(process.env.IAI_WM_SERVICE)
 
-// display a loading screen while connecting to IAI_WM_SERVICE
 log.info('starting the electron based gui')
 // see https://www.electronjs.org/docs/api/app#app
 app.allowRendererProcessReuse = true
@@ -33,6 +32,7 @@ app
       return event.preventDefault()
     } 
   })
+// display a loading screen while connecting to IAI_WM_SERVICE
 /*.whenReady().then(() => new Promise((resolve, reject) => {
     // see https://www.electronjs.org/docs/api/screen#screen
     let current = screen.getDisplayNearestPoint(screen.getCursorScreenPoint())

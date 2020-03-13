@@ -77,7 +77,7 @@ new Promise((resolve, reject) => {
 }))
 // grid layout
 .then(client => new Promise((resolve, reject) => {
-  let layout = { horizontal: 9, vertical: 5 }
+  let layout = { horizontal: 4, vertical: 3 }
   let timeout = setTimeout(() => reject('timed out'), 10000)
   let promise = client.layout(layout)
   assert.ok(promise instanceof Promise, 'client#layout() should return a promise')

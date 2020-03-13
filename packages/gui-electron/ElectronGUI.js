@@ -13,7 +13,7 @@ log.level = log.VERB
 
 // internal reference to the electron binary
 let electron = 'electron'
-// to allow usage of electron-prebuilt
+// allow usage of electron-prebuilt
 try { electron = require('electron-prebuilt') }
 catch (err) {
   if (err.code != 'MODULE_NOT_FOUND') {
@@ -22,12 +22,6 @@ catch (err) {
 }
 
 const ServiceServer = require('@iaigz/service-ws/ServiceServer')
-
-//
-// packaged dependencies
-//
-
-//const BrowserWindowRemote = require('./BrowserWindowRemote')
 
 //
 // exports: a builder (aka constructor)

@@ -10,12 +10,7 @@
   "license": "CC-BY-SA-4.0",
   "dependencies": {
     "@iaigz/core-log": "file:../core-log",
-    "@iaigz/service-ws": "file:../service-ws",
-    "@iaigz/util-ansi": "file:../util-ansi",
-    "@iaigz/util-callsite": "file:../util-callsite",
-    "@iaigz/util-dynamed": "file:../util-dynamed",
-    "iai-abc": "file:../iai-abc",
-    "iai-oop": "file:../iai-oop"
+    "@iaigz/service-ws": "file:../service-ws"
   },
   "directories": {
     "test": "test"
