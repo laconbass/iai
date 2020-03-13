@@ -3,6 +3,7 @@ const assert = require('assert')
 
 const View = require('./AbstractView')
 const Notifier = require('./Notifier')
+const Section = require('./Section')
 const pkgname = require('./package').name
 
 // TODO should ${ui} be a singleton extending View? => seems that NO
@@ -218,7 +219,7 @@ ui.deploy = (thing, container = ui.body) => {
   )
 }
 
-Object.defineProperty(ui, 'Section', { value: require('./Section'), enumerable: true })
+Object.defineProperty(ui, 'Section', { value: Section, enumerable: true })
 // CSS class to flag current sections/links
 let _cssnav = 'selected'
 ui.navigate = (link) => {
@@ -232,19 +233,18 @@ ui.navigate = (link) => {
 
   // TODO link.attributes.target.value === _blank?
 
-  // FIRST: remove selected class for any link or section within the page
+  // FIRST: remove _cssnav class for any link or section within the page
   Array.from(ui.links).forEach(a => a.classList.remove(_cssnav))
   Array.from(ui.sections).forEach(section => section.classList.remove(_cssnav))
 
-  // to setup selected class for any link pointing to the location
-  // retrieve first links with same href attribute value
+  // link.href will return a complete location (inc. protocol, host, etc)
   let href = link.attributes.href.value
+  // retrieve first links with same href attribute value
   let same = ui.$doc.querySelectorAll(`a[href="${href}"]`)
   // and retrieve also links pointing to the full location
-  // link.href will return a complete location (inc. protocol, host, etc)
-  let more = ui.$doc.querySelectorAll(`a[href="${link.href}"]`)
-  // now iterate and setup the selected class
-  Array.from(same).concat(Array.from(more)).forEach(a => a.classList.add(_cssnav))
+  let also = ui.$doc.querySelectorAll(`a[href="${link.href}"]`)
+  // now iterate and setup the _cssnav class
+  Array.from(same).concat(Array.from(also)).forEach(a => a.classList.add(_cssnav))
 
   // now let's find the section
   let section = ui.Section.find({ href: href })

@@ -23,6 +23,8 @@ function bundler (b) {
   // b.plugin('factor-bundle', {
   //   outputs: ['bundle/x', 'bundle/y']
   // })
+  // save built files to this directory
+  let destination = '.'
   return b.bundle()
     // catch out browserify/watchify errors
     .on('error', err => log.fatal(1, err.stack))
@@ -31,8 +33,10 @@ function bundler (b) {
     .pipe(buffer()) // buffer is needed by gulp-sourcemaps
     // load maps from browserify bundle TODO may using exorcist be simpler?
     .pipe(sourcemaps.init({ loadMaps: true }))
-    .pipe(sourcemaps.write('.')) // write .map file
-    .pipe(gulp.dest('.')) // save built files to this directory
+    // write .map file
+    .pipe(sourcemaps.write(destination))
+    // write bundle
+    .pipe(gulp.dest(destination))
 }
 
 bundler.options = {
