@@ -1,9 +1,20 @@
 assert_function iai || exit
 
 function iai-gulp () {
-	"$(iai nbin gulp)" "$@"
+  if test -r "$PWD/gulpfile.js"; then
+    local gulpfile="$PWD/gulpfile.js"
+  else
+    local gulpfile="$(iai root)/dojo/gulp/gulpfile.js"
+  fi
+  info "using $gulpfile"
+  local cwd="$PWD"
+  "$(iai nbin gulp)" \
+    --cwd "$cwd" \
+    --gulpfile "$gulpfile" \
+    "$@"
 }
 
 ##
-# vim modeline
+# vim modeline (see vim +'help modeline')
+# /* vim: set expandtab: */
 # /* vim: set filetype=sh ts=2 shiftwidth=2: */

@@ -24,7 +24,7 @@ function bundler (b) {
   //   outputs: ['bundle/x', 'bundle/y']
   // })
   // save built files to this directory
-  let destination = '.'
+  let destination = './assets'
   return b.bundle()
     // catch out browserify/watchify errors
     .on('error', err => log.fatal(1, err.stack))
@@ -33,8 +33,8 @@ function bundler (b) {
     .pipe(buffer()) // buffer is needed by gulp-sourcemaps
     // load maps from browserify bundle TODO may using exorcist be simpler?
     .pipe(sourcemaps.init({ loadMaps: true }))
-    // write .map file
-    .pipe(sourcemaps.write(destination))
+    // write .map file on same destination as bundle
+    .pipe(sourcemaps.write('.'))
     // write bundle
     .pipe(gulp.dest(destination))
 }

@@ -9,14 +9,15 @@ try {
   layout = require(process.env.HOME +'/.iai-layout.json')
 } catch (e) {
   // just use default layout
+  // TODO is error MODULE_NOT_FOUND? throw instead
 }
 
 let gui = new GUI()
 
 let assets = [
-  '/bundle.js',
-  '/bundle.js.map',
-]
+  'bundle.js',
+  'bundle.js.map',
+].map(file => `/assets/${file}`)
 
 let sections = {
   '/tab1': 'content/example.html',
