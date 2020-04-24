@@ -1,0 +1,30 @@
+assert_function iai || exit
+
+function iai-autowatch () {
+	test -n "$1" || fail "missing argument 1 (path to file)"
+	test -f "$1" || fail "file %s is not readable" "$1"
+	local file="$1"
+	shift
+
+	test $# -gt 0 || fail "no command specified"
+
+	local PREV CURR
+
+	utip "watching file %s for changes" "$file"
+	while true; do
+		sleep 1
+		CURR="$(md5sum "$file")"
+		test "$CURR" != "$PREV" && {
+			utip "run %s on %s change" "$*" "$file"
+			"$@"
+			utip "cmd %s exits with code %s" "$*" "$?"
+			echo
+			echo
+			PREV="$CURR"
+		}
+	done
+}
+
+##
+# vim modeline
+# /* vim: set filetype=sh ts=2 shiftwidth=2: */
