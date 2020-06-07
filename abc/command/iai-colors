@@ -11,6 +11,13 @@ function iai-colors () {
 		done
 		echo $(tput sgr0)
 	done
+	tput bold;  echo "This text has the bold attribute.";     tput sgr0
+  tput smul;  echo "This text is underlined (smul).";       tput rmul
+  tput rev;   echo "This text has the reverse attribute";   tput sgr0
+	# Standout mode is reverse on many terminals, bold on others.
+	tput smso;  echo "This text is in standout mode (smso)."; tput rmso
+  tput sgr0
+	utip "see also %s" "https://askubuntu.com/questions/1042234/modifying-the-color-of-grep/1042242#1042242"
 	return 0
 }
 ##

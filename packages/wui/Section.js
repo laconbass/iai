@@ -51,18 +51,21 @@ prototype.ready = function (ui) {
   ui.fetch(this.href).then(response => {
     switch (response.status) {
       case 200:
-        response.text().then(text => {
+        return response.text().then(text => {
           this.render(text)
           this.$.classList.remove('loading')
         })
-        break
       case 404:
-        this.render(`<h1>${response.statusText}</h1>`)
+        this.render([
+          `<h1>${this.text}: ${response.statusText}</h1>`,
+          `<p>La sección "${this.href}" no existe.</p>`
+        ].join('\n'))
         break
       default:
         console.error(response)
         throw new Error('Unknown response status code')
     }
+    this.$.classList.remove('loading')
   })
 }
 
