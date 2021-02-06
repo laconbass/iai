@@ -1,0 +1,200 @@
+assert_function iai || exit
+
+function iai-find-repos () {
+  # Finds directories within the system being git repositories.
+  #
+  # Usage: iai find-repos [directory=/] [options] [-- [find-arguments=-print]]
+  # Where:
+  #   [directory] is the search root
+  #   [options] allow customizing behaviour
+  #   [find-arguments] allow doing other thing than -print.
+  #
+  # Options
+  #
+  # --npm: restricts output to git repos having a package.json file at root
+  #
+  # It's posible doing things like
+  #     iai find-repos --npm -- -exec jq .name "{}/package.json" \;
+  #
+  # Predefined -prune rules
+  #
+  # It will ignore some known places on most systems where it's unlikely to
+  # live a git repository when [directoy] is "/" or begins with "/home"
+  #
+  # Aditionally, will ignore non-searchable directories (non-executable) when
+  # [directory] is "/"
+  #
+  # To understand what is being pruned, use
+  #     iai --verbose find-repos
+  #
+  # TODO it seems to behave incorrectly at @hopes. see outputs of:
+  # iai find-repos
+  # iai find-repos /home
+  ##
+  local root=/
+  local args=()
+  local last=(-print)
+
+  local flag_npm=0
+  
+  if test -d "$1"; then root="$1"; shift; fi
+
+  while test $# -gt 0;
+  do
+    case "$1" in
+      --help|-h|help|--usage)
+        read -d ':' HEAD <<<"$(grep -m 1 -n "$FUNCNAME" <"$BASH_SOURCE")"
+        read -d ':' TAIL <<<"$(grep -m 1 -n '##' <"$BASH_SOURCE")"
+        if type -p bat >/dev/null
+        then
+          bat --language bash --line-range "$HEAD:$TAIL" "$BASH_SOURCE"
+        else
+          tail "+$((HEAD))" $BASH_SOURCE | head "-$((TAIL - HEAD))"
+        fi
+        return 0
+        ;;
+      --)
+        test $# -gt 1 || fail "missing find-arguments after %s" "$*"
+        shift
+        last=("$@")
+        break
+        ;;
+      --npm) flag_npm=1 ;;
+      --*)
+        fail "Unknown argument %s" "$1"
+        ;;
+      -prune)
+        test -n "$2" || fail "missing argument after %s" "$*"
+        verb "will prune %s" "$2"
+        args+=(-path "$2" -prune -o)
+        shift
+        ;;
+      -*)
+        fail "Unknown argument: %s" "$1"
+        ;;
+      *)
+        ! test -d "$1" && emsg "Argument %s is not a directory" "$1"
+        fail "Bad argument list after %s", "$*"
+        ;;
+    esac
+    shift
+  done
+
+  if test "$root" == "/"
+  then
+    info "will apply %s prune rules" /
+    for dir in "*bin" boot dev etc "lib*" run s{rv,ys} tmp usr var proc opt
+    do
+      verb "will prune %s" "/$dir"
+      args+=(-path "/$dir" -prune -o)
+    done
+
+    # Prune non-executable directories
+    args+=(\( -type d ! -executable \) -prune -o)
+  else
+    verb "won't apply %s prune rules" /
+  fi
+
+  if test "$root" == "/" || test "${root#/home}" != "$root"
+  then
+    info "will apply %s prune rules" /home
+
+    # dot-places within HOME to be ignored
+    for dir in {cache,config,local,thumbnails,icons} {npm,nvm} \
+      android gnome mozilla "moonchild productions" \
+      zoom dia pencil mysql "Virtual Box VMs"\
+      Genymobile Edraw
+    do
+      { ! test -d "$HOME/.$dir"; } && continue
+      verb "will prune %s" "~/.$dir"
+      args+=(-path "$HOME/.$dir" -prune -o)
+    done
+
+    # dot-places within HOME to be ignored using expressions
+    for exp in "standard*"
+    do
+      { ! test -d "$HOME/."$exp; } && continue
+      verb "will prune %s" "~/.$exp"
+      args+=(-path "$HOME/.$exp" -prune -o)
+    done
+
+
+    # non-dot within HOME
+    for dir in snap
+    do
+      { ! test -d "$HOME/$dir"; } && continue
+      verb "will prune %s" "~/$dir"
+      args+=(-path "$HOME/$dir" -prune -o)
+    done
+
+    if type -p xdg-user-dir >/dev/null
+    then
+      for name in DOWNLOAD TEMPLATES DOCUMENTS MUSIC PICTURES VIDEOS
+      do
+        verb "will prune %s" "xdg-user-dir $name"
+        args+=(-path "$(xdg-user-dir $name)" -prune -o)
+      done
+    else
+      info "won't prune user data directories as %s is missing" xdg-user-dir
+    fi
+
+    # TODO may apply conditionally based on __GL_SHADER_DISK_CACHE env vars
+    # see https://bbs.archlinux.org/viewtopic.php?id=166814
+    if test -d "$HOME/.nv"
+    then
+      verb "will prune %s (nvidia cache directory)" "~/.nv"
+      args+=(-path "*/.nv" -prune -o)
+    fi
+  else
+    verb "won't apply %s prune rules" /home
+  fi
+
+
+  # Ignore known places where file-sync services work
+  args+=(-path "*/Dropbox*" -prune -o)
+  args+=(\( -type d -exec test -e "{}/.stfolder" \; \) -prune -o)
+
+  # Dirty solution to prune android SDK root
+  args+=(\( -type d -exec test -e "{}/SDK Readme.txt" \; \) -prune -o)
+
+  # Ignore .git's repositories contents
+  args+=(-path "*/.git/*" -prune -o)
+
+  # Ignore node_modules contents
+  args+=(-path "*/node_modules/*" -prune -o)
+
+  # OPTION 1: It's slow because there are huge repos
+  # TODO if --include-submodules
+  #args+=(\( -type d -exec test -e "{}/.git" \; \))
+  
+  # OPTION 2: Faster, but will not reach submodules
+  args+=(\( -type d -exec test -e "{}/.git" \; \) -prune)
+
+  if test $flag_npm -eq 1
+  then
+    # ignore repos don't having a package.json file
+    args+=(-exec test -e "{}/package.json" \;)
+  fi
+
+  info "Find repositories in %s" "$root"
+  find "$root" "${args[@]}" "${last[@]}"
+}
+
+find-package-repos () {
+  find-repos \
+  | while IFS= read -d $'\n' thing
+    do
+      test -f "$thing/package.json" || continue
+      jq <$thing/package.json --arg root "$thing" '{
+        key: .name, value: $root
+      }'
+    done \
+  | jq --slurp 'map(
+      select(.key | contains("@grupomarea"))
+    ) | from_entries'
+}
+
+##
+# vim modeline
+# /* vim: set filetype=sh ts=2 shiftwidth=2: */
+# /* vim: set expandtab: */
