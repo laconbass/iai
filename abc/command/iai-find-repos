@@ -1,7 +1,7 @@
 assert_function iai || exit
 
 function iai-find-repos () {
-  # Finds directories within the system being git repositories.
+  # Finds directories within the system being git repositories
   #
   # Usage: iai find-repos [directory=/] [options] [-- [find-arguments=-print]]
   # Where:
@@ -26,12 +26,9 @@ function iai-find-repos () {
   #
   # To understand what is being pruned, use
   #     iai --verbose find-repos
-  #
-  # TODO it seems to behave incorrectly at @hopes. see outputs of:
-  # iai find-repos
-  # iai find-repos /home
   ##
   local root=/
+  local opts=()
   local args=()
   local last=(-print)
 
@@ -57,9 +54,16 @@ function iai-find-repos () {
         test $# -gt 1 || fail "missing find-arguments after %s" "$*"
         shift
         last=("$@")
+        verb "find-action will be %s" "${last[*]}"
         break
         ;;
       --npm) flag_npm=1 ;;
+      --debug)
+        test -z "$2" && fail "missing argument after %s" "$*"
+        opts=(-D "$2")
+        shift
+        warn "what the fuck here %s · %s" "${opts[*]}" "$@"
+        ;;
       --*)
         fail "Unknown argument %s" "$1"
         ;;
@@ -73,23 +77,25 @@ function iai-find-repos () {
         fail "Unknown argument: %s" "$1"
         ;;
       *)
-        ! test -d "$1" && emsg "Argument %s is not a directory" "$1"
         fail "Bad argument list after %s", "$*"
         ;;
     esac
     shift
   done
+  verb "finished parsing arguments %s" "$*"
 
   if test "$root" == "/"
   then
     info "will apply %s prune rules" /
-    for dir in "*bin" boot dev etc "lib*" run s{rv,ys} tmp usr var proc opt
+    # Remember not to apply "*exp" rules here (i.e., "*bin")
+    for dir in {,s}bin boot dev etc "lib*" opt proc run s{rv,ys} tmp usr var
     do
       verb "will prune %s" "/$dir"
       args+=(-path "/$dir" -prune -o)
     done
 
     # Prune non-executable directories
+    verb "will prune %s" "( -type d ! -executable ) -prune -o"
     args+=(\( -type d ! -executable \) -prune -o)
   else
     verb "won't apply %s prune rules" /
@@ -176,8 +182,10 @@ function iai-find-repos () {
     args+=(-exec test -e "{}/package.json" \;)
   fi
 
-  info "Find repositories in %s" "$root"
-  find "$root" "${args[@]}" "${last[@]}"
+  info "%s [options] [rules] %s" "find $root" "${last[*]}"
+  test -n "${opts[*]}" && verb "with options %s" "${opts[*]}"
+  verb "with %s rules" "${#args[@]}"
+  find "${opts[@]}" "$root" "${args[@]}" "${last[@]}"
 }
 
 find-package-repos () {
