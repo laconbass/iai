@@ -1,12 +1,35 @@
 assert_function iai || exit
 
 function iai-sync () {
-  test -z "$1" && { iai-sync-all; return $?; }
+  test $# -eq 0 && {
+		info "Sincronizando todos os repositorios..."
+		iai find-repos --npm \
+		| while read repo
+	    do iai-sync-repo "$repo" || return
+			done
+		info "Sincronizados todos os repositorios."
+		return 0
+	}
   
   case "$1" in
-    repo|all) iai-sync-$1 ;;
-    status) iai git-status ;;
-    *) fail "unexpected content for \$1 ($1)" ;;
+		repo)
+			shift;
+			iai-sync-repo "$@"
+			;;
+	  status)
+			shift
+			iai-sync-status "$@"
+			;;
+		*)
+			test -d "$1" || fail "unexpected content for \$1: %s" "$1"
+
+			info "Sincronizando os repositorios en %s" "$1"
+			iai find-repos "$1" \
+			| while read repo
+				do iai-sync-repo "$repo" || return
+				done
+			info "Feito"
+			;;
   esac
 }
 
@@ -18,9 +41,35 @@ function json-value () {
 
 # git log --oneline --graph --decorate --date-order
 
-function iai-sync-repo () {
-	local repo="${1:-$(iai repo)}"; repo="${repo/#$HOME/~}"
-	test -z "$repo" && emsg "can't sync because can't find git repo" && exit 1
+function iai-sync-status () {
+	local repo="${1:-$(iai repo)}"
+	test -z "$repo" && emsg "can't sync because can't find git repo" && return 1
+
+	(
+	  set -Eeou pipefail
+	  cd "$repo"
+		info "mostrando estado de %s" "$PWD"
+		git remote -v \
+		| jq --raw-input \
+		'
+			split("\t") | {
+				(.[0]): (.[1] | split(" ") | {
+					(.[1] | gsub("[)(]"; "")): .[0]
+				})
+			}
+		' \
+		| jq --slurp \
+		  --argjson info "$(iai --quiet git-status)" \
+			--arg path "$PWD" \
+			'
+				reduce .[] as $item ({}; . * $item) | . * { path: $path, info: $info }
+			' \
+		;
+		#| jq --compact-output \
+  )
+
+	return 0
+	fail "Working on this shit"
  
   cd "$repo" || fail
 
@@ -78,13 +127,14 @@ function iai-sync-repo () {
   git status
 }
 
-function iai-sync-all () {
-  info "Sincronizando todos os repositorios..."
-	{
-		iai-sync-repo ~/Proxectos/iai
-    iai-sync-repo ~/Proxectos/empresa.lorenzogrv.com
-	} # |& utip
-  info "Sincronizados todos os repositorios."
+function iai-sync-repo () {
+	(
+	 cd "$1"
+	 git fetch
+   iai-sync-status "$1"
+	 git pull
+	)
+	return 0
 }
 
 ##
